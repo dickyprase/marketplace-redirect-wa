@@ -32,7 +32,7 @@ Nama Pembeli: {customer_name}
 
 ------------------------------
 Produk   : {product_name}
-Harga    : {price}
+{size_line}Harga    : {price}
 QTY      : {quantity}
 Subtotal : {subtotal}
 ------------------------------

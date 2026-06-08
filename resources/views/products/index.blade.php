@@ -14,8 +14,8 @@
                 <a href="{{ route('products.show', $product) }}"
                    class="bg-white rounded-xl shadow-sm hover:shadow-md transition overflow-hidden border border-gray-100 flex flex-col">
                     <div class="aspect-video bg-gray-100 flex items-center justify-center overflow-hidden">
-                        @if ($product->image_path)
-                            <img src="{{ asset('storage/' . $product->image_path) }}"
+                        @if ($product->primaryImage)
+                            <img src="{{ $product->primaryImage->url }}"
                                  alt="{{ $product->name }}" class="object-cover w-full h-full">
                         @else
                             <span class="text-gray-300 text-sm">Tanpa Gambar</span>
@@ -24,9 +24,9 @@
                     <div class="p-4 flex flex-col flex-1">
                         <div class="flex items-start justify-between gap-2">
                             <h2 class="font-semibold text-gray-800 leading-snug">{{ $product->name }}</h2>
-                            <x-stock-badge :status="$product->stock_status" />
+                            <x-stock-badge :status="$product->effectiveStatus()" />
                         </div>
-                        <p class="text-indigo-600 font-bold mt-3 text-lg">{{ $product->formatted_price }}</p>
+                        <p class="text-indigo-600 font-bold mt-3 text-lg">{{ $product->priceRangeLabel() }}</p>
                     </div>
                 </a>
             @endforeach

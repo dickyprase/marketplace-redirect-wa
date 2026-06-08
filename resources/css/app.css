@@ -1,3 +1,26 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Tabel pada size chart & deskripsi produk (HTML dari CKEditor) */
+.sizechart-content table,
+.prose table.table,
+.prose table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.sizechart-content th,
+.sizechart-content td,
+.prose table th,
+.prose table td {
+    border: 1px solid #d1d5db;
+    padding: 0.5rem 0.75rem;
+    text-align: left;
+}
+
+.sizechart-content th,
+.prose table th {
+    background-color: #f3f4f6;
+    font-weight: 600;
+}

@@ -12,7 +12,7 @@ class ProductController extends Controller
      */
     public function index(): View
     {
-        $products = Product::latest()->get();
+        $products = Product::with(['images', 'sizes'])->latest()->get();
 
         return view('products.index', compact('products'));
     }
@@ -22,6 +22,8 @@ class ProductController extends Controller
      */
     public function show(Product $product): View
     {
+        $product->load(['images', 'sizes']);
+
         return view('products.show', compact('product'));
     }
 }

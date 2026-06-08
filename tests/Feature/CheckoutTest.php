@@ -102,4 +102,72 @@ class CheckoutTest extends TestCase
         $decoded = urldecode($target);
         $this->assertStringNotContainsString('Catatan:', $decoded);
     }
+
+    public function test_size_is_required_when_product_has_sizes(): void
+    {
+        $product = Product::create([
+            'name' => 'Hoodie',
+            'price' => 250000,
+            'stock_status' => Product::STATUS_AVAILABLE,
+        ]);
+        $product->sizes()->create([
+            'label' => 'M', 'price' => 250000, 'stock_status' => Product::STATUS_AVAILABLE,
+        ]);
+
+        $response = $this->post('/checkout', [
+            'product_id' => $product->id,
+            'customer_name' => 'Budi',
+            'quantity' => 1,
+        ]);
+
+        $response->assertSessionHasErrors('size_id');
+    }
+
+    public function test_price_is_taken_from_selected_size(): void
+    {
+        $product = Product::create([
+            'name' => 'Hoodie',
+            'price' => 250000,
+            'stock_status' => Product::STATUS_AVAILABLE,
+        ]);
+        $sizeL = $product->sizes()->create([
+            'label' => 'L', 'price' => 265000, 'stock_status' => Product::STATUS_PREORDER,
+        ]);
+
+        $target = $this->post('/checkout', [
+            'product_id' => $product->id,
+            'size_id' => $sizeL->id,
+            'customer_name' => 'Budi',
+            'quantity' => 2,
+        ])->headers->get('Location');
+
+        $decoded = urldecode($target);
+        // 265.000 x 2 = 530.000, harga diambil dari ukuran L.
+        $this->assertStringContainsString('Rp 530.000', $decoded);
+        $this->assertStringContainsString('Ukuran: L', $decoded);
+        // Status order mengikuti ukuran (pre-order).
+        $this->assertStringContainsString('PRE-ORDER', $decoded);
+    }
+
+    public function test_checkout_blocks_unavailable_size(): void
+    {
+        $product = Product::create([
+            'name' => 'Sepatu',
+            'price' => 180000,
+            'stock_status' => Product::STATUS_AVAILABLE,
+        ]);
+        $sizeHabis = $product->sizes()->create([
+            'label' => '42', 'price' => 180000, 'stock_status' => Product::STATUS_UNAVAILABLE,
+        ]);
+
+        $response = $this->from('/product/' . $product->slug)->post('/checkout', [
+            'product_id' => $product->id,
+            'size_id' => $sizeHabis->id,
+            'customer_name' => 'Ani',
+            'quantity' => 1,
+        ]);
+
+        $response->assertRedirect('/product/' . $product->slug);
+        $response->assertSessionHas('error');
+    }
 }

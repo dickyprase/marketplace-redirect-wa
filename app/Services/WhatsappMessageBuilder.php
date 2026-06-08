@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Product;
+use App\Models\ProductSize;
 use App\Models\Setting;
 
 class WhatsappMessageBuilder
@@ -20,6 +21,8 @@ class WhatsappMessageBuilder
             '{notes_line}'    => 'Baris "Catatan: ..." otomatis (hilang bila catatan kosong)',
             '{order_status}'  => 'REGULER atau PRE-ORDER',
             '{product_name}'  => 'Nama produk',
+            '{size}'          => 'Ukuran yang dipilih (kosong bila produk tanpa ukuran)',
+            '{size_line}'     => 'Baris "Ukuran: ..." otomatis (hilang bila tanpa ukuran)',
             '{price}'         => 'Harga satuan (format Rupiah)',
             '{quantity}'      => 'Jumlah / QTY',
             '{subtotal}'      => 'Subtotal (harga x qty, format Rupiah)',
@@ -34,20 +37,29 @@ class WhatsappMessageBuilder
         Product $product,
         string $customerName,
         ?string $notes,
-        int $quantity
+        int $quantity,
+        ?ProductSize $size = null
     ): string {
-        $subtotal = (float) $product->price * $quantity;
+        // Harga & status order diambil dari ukuran terpilih bila ada.
+        $unitPrice = $size ? (float) $size->price : (float) $product->price;
+        $isPreOrder = $size ? $size->isPreOrder() : $product->isPreOrder();
+        $subtotal = $unitPrice * $quantity;
 
         $notes = $notes !== null ? trim($notes) : null;
         $notesLine = ! empty($notes) ? 'Catatan: ' . $notes . "\n" : '';
+
+        $sizeLabel = $size ? $size->label : '';
+        $sizeLine = $size ? 'Ukuran: ' . $size->label . "\n" : '';
 
         $replacements = [
             '{customer_name}' => $customerName,
             '{notes}'         => $notes ?? '',
             '{notes_line}'    => $notesLine,
-            '{order_status}'  => $product->orderLabel(),
+            '{order_status}'  => $isPreOrder ? 'PRE-ORDER' : 'REGULER',
             '{product_name}'  => $product->name,
-            '{price}'         => $this->rupiah((float) $product->price),
+            '{size}'          => $sizeLabel,
+            '{size_line}'     => $sizeLine,
+            '{price}'         => $this->rupiah($unitPrice),
             '{quantity}'      => (string) $quantity,
             '{subtotal}'      => $this->rupiah($subtotal),
             '{total}'         => $this->rupiah($subtotal),

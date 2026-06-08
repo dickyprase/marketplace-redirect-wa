@@ -6,13 +6,17 @@ Seluruh perhitungan harga & penyusunan pesan dilakukan di sisi server untuk menj
 
 ## Fitur
 
-- **Katalog produk** dengan badge status stok berwarna (hijau `tersedia`, merah `tidak tersedia`, kuning `pre order`).
+- **Katalog produk** dengan badge status stok berwarna (hijau `tersedia`, merah `tidak tersedia`, kuning `pre order`). Harga tampil sebagai rentang bila produk punya beberapa ukuran berbeda harga.
 - **Halaman detail + form pemesanan** (nama pembeli, catatan, jumlah). Tombol otomatis nonaktif bila stok habis, dan berubah jadi "Pre-Order via WhatsApp" untuk produk pre-order.
-- **Checkout aman**: harga diambil ulang dari database (tidak percaya input frontend), lalu redirect ke `https://wa.me/<nomor>?text=<pesan>`.
-- **Dashboard admin** (Laravel Breeze): CRUD produk + upload gambar.
+- **Multiple gambar produk** dengan galeri (gambar utama + thumbnail) di halaman detail.
+- **Deskripsi rich text** memakai CKEditor 5 (disimpan sebagai HTML, disanitasi server-side dengan HTMLPurifier).
+- **Ukuran per produk** (opsional): tiap ukuran punya harga & status stok sendiri. Wajib dipilih saat checkout bila produk punya ukuran; ukuran "tidak tersedia" otomatis dinonaktifkan.
+- **Size Chart**: tabel ukuran yang diisi admin via editor, tampil sebagai modal di halaman produk.
+- **Checkout aman**: harga diambil ulang dari database (tidak percaya input frontend) — dari ukuran terpilih bila ada — lalu redirect ke `https://wa.me/<nomor>?text=<pesan>`.
+- **Dashboard admin** (Laravel Breeze): CRUD produk + upload banyak gambar + kelola ukuran & size chart.
 - **Pengaturan WhatsApp di dashboard** (bukan di `.env`):
   - Nomor WhatsApp admin bisa diubah kapan saja.
-  - Template pesan checkout bisa diedit, mendukung **placeholder** dinamis.
+  - Template pesan checkout bisa diedit, mendukung **placeholder** dinamis (termasuk `{size}`).
   - Mendukung **styling WhatsApp**: `*tebal*`, `_miring_`, `~coret~`, ` ```mono``` `.
   - **Pratinjau live** ala bubble chat WhatsApp memakai data contoh.
 
@@ -94,6 +98,8 @@ Nilai `WHATSAPP_ADMIN_NUMBER` di `.env` hanya dipakai sebagai nilai awal saat se
 | `{notes_line}` | Baris `Catatan: ...` otomatis (hilang bila catatan kosong) |
 | `{order_status}` | `REGULER` atau `PRE-ORDER` |
 | `{product_name}` | Nama produk |
+| `{size}` | Ukuran yang dipilih (kosong bila produk tanpa ukuran) |
+| `{size_line}` | Baris `Ukuran: ...` otomatis (hilang bila produk tanpa ukuran) |
 | `{price}` | Harga satuan (format Rupiah) |
 | `{quantity}` | Jumlah / QTY |
 | `{subtotal}` | Subtotal (harga x qty) |
@@ -118,7 +124,7 @@ Nama Pembeli: {customer_name}
 
 ------------------------------
 Produk   : {product_name}
-Harga    : {price}
+{size_line}Harga    : {price}
 QTY      : {quantity}
 Subtotal : {subtotal}
 ------------------------------
