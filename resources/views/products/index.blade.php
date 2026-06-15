@@ -77,7 +77,7 @@
       <div class="row gy-4 align-items-stretch">
         @forelse ($products as $product)
         <div class="col-6 col-lg-3" data-aos="fade-up" data-aos-delay="200">
-          <article class="card-post h-100 d-flex flex-column">
+          <article class="card-post h-100 d-flex flex-column position-relative">
             <div class="post-img position-relative overflow-hidden">
               @if ($product->primaryImage)
                 <img src="{{ $product->primaryImage->url }}" class="img-fluid w-100" alt="{{ $product->name }}" loading="lazy">
@@ -94,7 +94,7 @@
               <h3 class="title" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:2.7em;">{{ $product->name }}</h3>
               <h5 class="mb-0">{{ $product->priceRangeLabel() }}</h5>
               <div class="mt-auto pt-3 text-center">
-                <a href="{{ route('products.show', $product) }}" class="btn btn-dark ps-5 pe-5">Detail</a>
+                <a href="{{ route('products.show', $product) }}" class="btn btn-dark ps-5 pe-5 stretched-link">Detail</a>
               </div>
             </div>
           </article>
