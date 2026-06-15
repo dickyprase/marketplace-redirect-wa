@@ -93,7 +93,7 @@
               </div>
               <h3 class="title">{{ $product->name }}</h3>
               <h5>{{ $product->priceRangeLabel() }}</h5>
-              <div class="mt-3 text-center">
+              <div class="mt-auto pt-3 text-center">
                 <a href="{{ route('products.show', $product) }}" class="btn btn-dark ps-5 pe-5">Detail</a>
               </div>
             </div>
