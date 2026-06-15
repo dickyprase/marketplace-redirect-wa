@@ -1,38 +1,32 @@
 @php $banner = $banner ?? null; @endphp
+
 @if ($errors->any())
-    <div class="mb-4 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3">
-        <ul class="list-disc list-inside space-y-1">
-            @foreach ($errors->all() as $e)<li>{{ $e }}</li>@endforeach
-        </ul>
-    </div>
+    <div class="alert alert-danger"><ul class="mb-0">@foreach ($errors->all() as $e)<li>{{ $e }}</li>@endforeach</ul></div>
 @endif
 
-<div class="space-y-4">
+<div class="vstack gap-4">
     <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Gambar Banner</label>
+        <label class="form-label fw-medium">Gambar Banner</label>
         @if (! empty($banner?->image_path))
-            <img src="{{ asset('storage/'.$banner->image_path) }}" class="w-full h-32 object-cover rounded mb-2" alt="">
+            <img src="{{ asset('storage/'.$banner->image_path) }}" class="rounded mb-2 d-block" style="width:100%;max-height:160px;object-fit:cover" alt="">
         @endif
-        <input type="file" name="image" accept="image/*" {{ $banner ? '' : 'required' }}
-               class="block w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:bg-indigo-50 file:text-indigo-700">
-        <p class="text-xs text-indigo-600 mt-1 font-medium">Ukuran gambar terbaik: 1920 x 700 px (landscape). Format: JPG, PNG, atau WEBP. Maks 4MB.</p>
+        <input type="file" name="image" accept="image/*" {{ $banner ? '' : 'required' }} class="form-control">
+        <div class="form-text">Ukuran terbaik: 1920×700 px. Maks 4MB.</div>
     </div>
     <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Link (opsional)</label>
-        <input type="text" name="link" value="{{ old('link', $banner->link ?? '') }}" placeholder="https://..." class="w-full rounded-lg border-gray-300 focus:border-indigo-500 focus:ring-indigo-500">
+        <label class="form-label fw-medium">Link (opsional)</label>
+        <input type="text" name="link" value="{{ old('link', $banner->link ?? '') }}" placeholder="https://..." class="form-control">
     </div>
     <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Urutan</label>
-        <input type="number" name="sort_order" value="{{ old('sort_order', $banner->sort_order ?? 0) }}" class="w-full rounded-lg border-gray-300 focus:border-indigo-500 focus:ring-indigo-500">
+        <label class="form-label fw-medium">Urutan</label>
+        <input type="number" name="sort_order" value="{{ old('sort_order', $banner->sort_order ?? 0) }}" class="form-control" style="max-width:150px">
     </div>
-    <div>
-        <label class="inline-flex items-center gap-2">
-            <input type="checkbox" name="is_active" value="1" @checked(old('is_active', $banner->is_active ?? true))>
-            <span class="text-sm text-gray-700">Aktif (tampil di homepage)</span>
-        </label>
+    <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" name="is_active" value="1" id="bannerActive" @checked(old('is_active', $banner->is_active ?? true))>
+        <label class="form-check-label" for="bannerActive">Aktif (tampil di homepage)</label>
     </div>
-    <div class="flex items-center gap-3 pt-2">
-        <button type="submit" class="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-md">Simpan</button>
-        <a href="{{ route('admin.banners.index') }}" class="text-sm text-gray-500">Batal</a>
+    <div class="d-flex gap-2 pt-2">
+        <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-1"></i> Simpan</button>
+        <a href="{{ route('admin.banners.index') }}" class="btn btn-light">Batal</a>
     </div>
 </div>

@@ -1,21 +1,29 @@
-<x-app-layout>
-    <x-slot name="header"><h2 class="font-semibold text-xl text-gray-800 leading-tight">Edit Tag</h2></x-slot>
-    <div class="py-8"><div class="max-w-xl mx-auto sm:px-6 lg:px-8">
-        <div class="bg-white shadow-sm rounded-lg p-6">
-            @if ($errors->any())<div class="mb-4 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3"><ul class="list-disc list-inside">@foreach ($errors->all() as $e)<li>{{ $e }}</li>@endforeach</ul></div>@endif
-            <form action="{{ route('admin.tags.update', $tag) }}" method="POST">
-                @csrf @method('PUT')
-                <div class="space-y-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Nama Tag</label>
-                        <input type="text" name="name" required value="{{ old('name', $tag->name) }}" class="w-full rounded-lg border-gray-300 focus:border-indigo-500 focus:ring-indigo-500">
-                    </div>
-                    <div class="flex items-center gap-3 pt-2">
-                        <button type="submit" class="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-md">Simpan</button>
-                        <a href="{{ route('admin.tags.index') }}" class="text-sm text-gray-500">Batal</a>
-                    </div>
+@extends('layouts.admin')
+@section('title', 'Edit Tag')
+
+@section('content')
+<div class="mb-4">
+    <a href="{{ route('admin.tags.index') }}" class="text-muted text-decoration-none small"><i class="bi bi-arrow-left me-1"></i> Kembali</a>
+</div>
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-4">
+        <h5 class="fw-bold mb-4">Edit Tag</h5>
+        @if ($errors->any())
+            <div class="alert alert-danger"><ul class="mb-0">@foreach ($errors->all() as $e)<li>{{ $e }}</li>@endforeach</ul></div>
+        @endif
+        <form action="{{ route('admin.tags.update', $tag) }}" method="POST">
+            @csrf @method('PUT')
+            <div class="vstack gap-4">
+                <div>
+                    <label class="form-label fw-medium">Nama Tag</label>
+                    <input type="text" name="name" required value="{{ old('name', $tag->name) }}" class="form-control">
                 </div>
-            </form>
-        </div>
-    </div></div>
-</x-app-layout>
+                <div class="d-flex gap-2 pt-2">
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-1"></i> Simpan</button>
+                    <a href="{{ route('admin.tags.index') }}" class="btn btn-light">Batal</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+@endsection

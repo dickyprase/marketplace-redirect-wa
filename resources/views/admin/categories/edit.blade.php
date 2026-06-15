@@ -1,11 +1,17 @@
-<x-app-layout>
-    <x-slot name="header"><h2 class="font-semibold text-xl text-gray-800 leading-tight">Edit Kategori</h2></x-slot>
-    <div class="py-8"><div class="max-w-2xl mx-auto sm:px-6 lg:px-8">
-        <div class="bg-white shadow-sm rounded-lg p-6">
-            <form action="{{ route('admin.categories.update', $category) }}" method="POST" enctype="multipart/form-data">
-                @csrf @method('PUT')
-                @include('admin.categories._form', ['category' => $category])
-            </form>
-        </div>
-    </div></div>
-</x-app-layout>
+@extends('layouts.admin')
+@section('title', 'Edit Kategori')
+
+@section('content')
+<div class="mb-4">
+    <a href="{{ route('admin.categories.index') }}" class="text-muted text-decoration-none small"><i class="bi bi-arrow-left me-1"></i> Kembali</a>
+</div>
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-4">
+        <h5 class="fw-bold mb-4">Edit Kategori</h5>
+        <form action="{{ route('admin.categories.update', $category) }}" method="POST" enctype="multipart/form-data">
+            @csrf @method('PUT')
+            @include('admin.categories._form', ['category' => $category])
+        </form>
+    </div>
+</div>
+@endsection

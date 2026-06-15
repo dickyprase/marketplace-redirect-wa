@@ -1084,10 +1084,10 @@ section,
 }
 
 .product-posts .card-post .content .title {
-  font-size: 20px;
+  font-size: 15px;
   line-height: 1.35;
   font-weight: 700;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
   color: var(--heading-color);
   transition: color 0.3s ease;
 }
@@ -1104,6 +1104,12 @@ section,
 
 .product-posts .card-post:hover .content .title {
   color: var(--accent-color);
+}
+
+.product-posts .card-post .content h5 {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 12px;
 }
 
 @media (max-width: 576px) {
@@ -1142,7 +1148,11 @@ section,
 
 @media (max-width: 768px) {
   .product-posts .card-post .content .title {
-    font-size: 18px;
+    font-size: 13px;
+  }
+
+  .product-posts .card-post .content h5 {
+    font-size: 12px;
   }
 
   .product-posts .card-post .content p {

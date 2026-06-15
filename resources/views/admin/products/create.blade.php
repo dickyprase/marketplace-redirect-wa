@@ -1,16 +1,20 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">Tambah Produk</h2>
-    </x-slot>
+@extends('layouts.admin')
+@section('title', 'Tambah Produk')
 
-    <div class="py-8">
-        <div class="max-w-2xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white shadow-sm rounded-lg p-6">
-                <form action="{{ route('admin.products.store') }}" method="POST" enctype="multipart/form-data">
-                    @csrf
-                    @include('admin.products._form')
-                </form>
-            </div>
-        </div>
+@section('content')
+<div class="mb-4">
+    <a href="{{ route('admin.products.index') }}" class="text-muted text-decoration-none small">
+        <i class="bi bi-arrow-left me-1"></i> Kembali ke Produk
+    </a>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-4">
+        <h5 class="fw-bold mb-4">Tambah Produk Baru</h5>
+        <form action="{{ route('admin.products.store') }}" method="POST" enctype="multipart/form-data">
+            @csrf
+            @include('admin.products._form')
+        </form>
     </div>
-</x-app-layout>
+</div>
+@endsection

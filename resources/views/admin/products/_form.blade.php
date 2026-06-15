@@ -15,159 +15,151 @@
 @endphp
 
 @if ($errors->any())
-    <div class="mb-4 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3">
-        <ul class="list-disc list-inside space-y-1">
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
+    <div class="alert alert-danger">
+        <ul class="mb-0">
+            @foreach ($errors->all() as $error)<li>{{ $error }}</li>@endforeach
         </ul>
     </div>
 @endif
 
-<div class="space-y-5">
+<div class="vstack gap-4">
+    {{-- Nama --}}
     <div>
-        <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Nama Produk</label>
-        <input type="text" name="name" id="name" required
-               value="{{ old('name', $product->name ?? '') }}"
-               class="w-full rounded-lg border-gray-300 focus:border-indigo-500 focus:ring-indigo-500">
+        <label for="name" class="form-label fw-medium">Nama Produk</label>
+        <input type="text" name="name" id="name" required value="{{ old('name', $product->name ?? '') }}" class="form-control">
     </div>
 
-    <div>
-        <label for="price" class="block text-sm font-medium text-gray-700 mb-1">
-            Harga Dasar (Rp)
-        </label>
-        <input type="number" step="0.01" min="0" name="price" id="price" required
-               value="{{ old('price', $product->price ?? '') }}"
-               class="w-full rounded-lg border-gray-300 focus:border-indigo-500 focus:ring-indigo-500">
-        <p class="text-xs text-gray-400 mt-1">Dipakai bila produk TIDAK memiliki ukuran. Bila ada ukuran, harga diambil dari tiap ukuran.</p>
-    </div>
-
-    <div>
-        <label for="stock_status" class="block text-sm font-medium text-gray-700 mb-1">Status Stok (produk tanpa ukuran)</label>
-        <select name="stock_status" id="stock_status" required
-                class="w-full rounded-lg border-gray-300 focus:border-indigo-500 focus:ring-indigo-500">
+    <div class="row g-3">
+        {{-- Harga --}}
+        <div class="col-md-6">
+            <label for="price" class="form-label fw-medium">Harga Dasar (Rp)</label>
+            <input type="number" step="0.01" min="0" name="price" id="price" required value="{{ old('price', $product->price ?? '') }}" class="form-control">
+            <div class="form-text">Dipakai bila produk TIDAK memiliki ukuran.</div>
+        </div>
+        {{-- Status Stok --}}
+        <div class="col-md-6">
+            <label for="stock_status" class="form-label fw-medium">Status Stok</label>
             @php $current = old('stock_status', $product->stock_status ?? 'tersedia'); @endphp
-            <option value="tersedia" @selected($current === 'tersedia')>Tersedia</option>
-            <option value="tidak tersedia" @selected($current === 'tidak tersedia')>Tidak Tersedia</option>
-            <option value="pre order" @selected($current === 'pre order')>Pre Order</option>
-        </select>
-    </div>
-
-    {{-- Kategori --}}
-    <div>
-        <label for="category_id" class="block text-sm font-medium text-gray-700 mb-1">Kategori</label>
-        <select name="category_id" id="category_id"
-                class="w-full rounded-lg border-gray-300 focus:border-indigo-500 focus:ring-indigo-500">
-            <option value="">— Tanpa kategori —</option>
-            @foreach (($categories ?? collect()) as $cat)
-                <option value="{{ $cat->id }}" @selected(old('category_id', $product->category_id ?? null) == $cat->id)>{{ $cat->name }}</option>
-            @endforeach
-        </select>
-    </div>
-
-    {{-- Tag promo --}}
-    <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Tag Promo</label>
-        @php
-            $selectedTagIds = old('tags', isset($product) ? $product->tags->pluck('id')->all() : []);
-        @endphp
-        <div class="flex flex-wrap gap-2">
-            @foreach (($tags ?? collect()) as $tag)
-                <label class="inline-flex items-center gap-1 px-3 py-1.5 border rounded-lg cursor-pointer">
-                    <input type="checkbox" name="tags[]" value="{{ $tag->id }}" @checked(in_array($tag->id, $selectedTagIds))>
-                    <span class="text-sm">{{ $tag->name }}</span>
-                </label>
-            @endforeach
-            @if (($tags ?? collect())->isEmpty())
-                <p class="text-sm text-gray-400">Belum ada tag. Buat tag di menu "Tag Promo".</p>
-            @endif
+            <select name="stock_status" id="stock_status" required class="form-select">
+                <option value="tersedia" @selected($current === 'tersedia')>Tersedia</option>
+                <option value="tidak tersedia" @selected($current === 'tidak tersedia')>Tidak Tersedia</option>
+                <option value="pre order" @selected($current === 'pre order')>Pre Order</option>
+            </select>
         </div>
     </div>
 
-    {{-- Deskripsi (CKEditor) --}}
+    <div class="row g-3">
+        {{-- Kategori --}}
+        <div class="col-md-6">
+            <label for="category_id" class="form-label fw-medium">Kategori</label>
+            <select name="category_id" id="category_id" class="form-select">
+                <option value="">— Tanpa kategori —</option>
+                @foreach (($categories ?? collect()) as $cat)
+                    <option value="{{ $cat->id }}" @selected(old('category_id', $product->category_id ?? null) == $cat->id)>{{ $cat->name }}</option>
+                @endforeach
+            </select>
+        </div>
+        {{-- Tag Promo --}}
+        <div class="col-md-6">
+            <label class="form-label fw-medium">Tag Promo</label>
+            @php $selectedTagIds = old('tags', isset($product) ? $product->tags->pluck('id')->all() : []); @endphp
+            <div class="d-flex flex-wrap gap-2">
+                @foreach (($tags ?? collect()) as $tag)
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" name="tags[]" value="{{ $tag->id }}" id="tag-{{ $tag->id }}" @checked(in_array($tag->id, $selectedTagIds))>
+                        <label class="form-check-label" for="tag-{{ $tag->id }}">{{ $tag->name }}</label>
+                    </div>
+                @endforeach
+                @if (($tags ?? collect())->isEmpty())
+                    <p class="text-muted small">Belum ada tag.</p>
+                @endif
+            </div>
+        </div>
+    </div>
+
+    {{-- Deskripsi --}}
     <div>
-        <label for="description" class="block text-sm font-medium text-gray-700 mb-1">Deskripsi</label>
+        <label for="description" class="form-label fw-medium">Deskripsi</label>
         <textarea name="description" id="description" class="ckeditor-rich">{{ old('description', $product->description ?? '') }}</textarea>
     </div>
 
     {{-- Ukuran --}}
-    <div x-data="sizeEditor(@js($oldSizes))" class="border border-gray-200 rounded-lg p-4">
-        <div class="flex items-center justify-between mb-3">
+    <div x-data="sizeEditor(@js($oldSizes))" class="card border">
+        <div class="card-header bg-light d-flex justify-content-between align-items-center">
             <div>
-                <h3 class="text-sm font-semibold text-gray-700">Ukuran (opsional)</h3>
-                <p class="text-xs text-gray-400">Tambahkan ukuran bila produk punya varian ukuran. Tiap ukuran punya harga & status sendiri.</p>
+                <h6 class="mb-0 fw-semibold">Ukuran (opsional)</h6>
+                <small class="text-muted">Tiap ukuran punya harga & status sendiri.</small>
             </div>
-            <button type="button" @click="addRow()"
-                    class="text-sm bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-medium px-3 py-1.5 rounded-md">
-                + Tambah Ukuran
+            <button type="button" @click="addRow()" class="btn btn-sm btn-outline-primary">
+                <i class="bi bi-plus"></i> Tambah Ukuran
             </button>
         </div>
-
-        <template x-if="rows.length === 0">
-            <p class="text-sm text-gray-400 py-2">Belum ada ukuran. Produk akan memakai harga & status dasar di atas.</p>
-        </template>
-
-        <div class="space-y-2">
-            <template x-for="(row, idx) in rows" :key="idx">
-                <div class="grid grid-cols-12 gap-2 items-center">
-                    <input type="text" :name="`sizes[${idx}][label]`" x-model="row.label" placeholder="Ukuran (mis. M)"
-                           class="col-span-3 rounded-lg border-gray-300 text-sm focus:border-indigo-500 focus:ring-indigo-500">
-                    <input type="number" step="0.01" min="0" :name="`sizes[${idx}][price]`" x-model="row.price" placeholder="Harga"
-                           class="col-span-4 rounded-lg border-gray-300 text-sm focus:border-indigo-500 focus:ring-indigo-500">
-                    <select :name="`sizes[${idx}][stock_status]`" x-model="row.stock_status"
-                            class="col-span-4 rounded-lg border-gray-300 text-sm focus:border-indigo-500 focus:ring-indigo-500">
-                        <option value="tersedia">Tersedia</option>
-                        <option value="tidak tersedia">Tidak Tersedia</option>
-                        <option value="pre order">Pre Order</option>
-                    </select>
-                    <button type="button" @click="removeRow(idx)"
-                            class="col-span-1 text-red-500 hover:text-red-700 text-sm" title="Hapus">&times;</button>
-                </div>
+        <div class="card-body">
+            <template x-if="rows.length === 0">
+                <p class="text-muted small mb-0">Belum ada ukuran. Produk akan memakai harga dasar.</p>
             </template>
+            <div class="vstack gap-2">
+                <template x-for="(row, idx) in rows" :key="idx">
+                    <div class="row g-2 align-items-center">
+                        <div class="col-3">
+                            <input type="text" :name="`sizes[${idx}][label]`" x-model="row.label" placeholder="Ukuran (mis. M)" class="form-control form-control-sm">
+                        </div>
+                        <div class="col-4">
+                            <input type="number" step="0.01" min="0" :name="`sizes[${idx}][price]`" x-model="row.price" placeholder="Harga" class="form-control form-control-sm">
+                        </div>
+                        <div class="col-4">
+                            <select :name="`sizes[${idx}][stock_status]`" x-model="row.stock_status" class="form-select form-select-sm">
+                                <option value="tersedia">Tersedia</option>
+                                <option value="tidak tersedia">Tidak Tersedia</option>
+                                <option value="pre order">Pre Order</option>
+                            </select>
+                        </div>
+                        <div class="col-1 text-center">
+                            <button type="button" @click="removeRow(idx)" class="btn btn-sm btn-link text-danger p-0" title="Hapus"><i class="bi bi-x-lg"></i></button>
+                        </div>
+                    </div>
+                </template>
+            </div>
         </div>
     </div>
 
-    {{-- Size chart (CKEditor dengan tabel) --}}
+    {{-- Size Chart --}}
     <div>
-        <label for="size_chart" class="block text-sm font-medium text-gray-700 mb-1">Size Chart (tabel)</label>
-        <p class="text-xs text-gray-400 mb-1">Isi tabel ukuran. Akan tampil sebagai modal "Size Chart" di halaman produk.</p>
+        <label for="size_chart" class="form-label fw-medium">Size Chart (tabel)</label>
+        <div class="form-text mt-0 mb-2">Akan tampil sebagai modal "Size Chart" di halaman produk.</div>
         <textarea name="size_chart" id="size_chart" class="ckeditor-table">{{ old('size_chart', $product->size_chart ?? '') }}</textarea>
     </div>
 
     {{-- Gambar --}}
     <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Gambar Produk</label>
-
+        <label class="form-label fw-medium">Gambar Produk</label>
         @if ($product && $product->images->isNotEmpty())
-            <div class="grid grid-cols-3 sm:grid-cols-4 gap-3 mb-3">
+            <div class="row g-3 mb-3">
                 @foreach ($product->images as $image)
-                    <div class="border rounded-lg p-2 text-center">
-                        <img src="{{ $image->url }}" class="w-full h-24 object-cover rounded mb-2" alt="">
-                        <label class="flex items-center justify-center gap-1 text-xs text-gray-600">
-                            <input type="radio" name="primary_image" value="{{ $image->id }}" @checked($image->is_primary)>
-                            Utama
-                        </label>
-                        <label class="flex items-center justify-center gap-1 text-xs text-red-600 mt-1">
-                            <input type="checkbox" name="delete_images[]" value="{{ $image->id }}">
-                            Hapus
-                        </label>
+                    <div class="col-4 col-sm-3 col-lg-2">
+                        <div class="card border text-center p-2">
+                            <img src="{{ $image->url }}" class="rounded mb-2" style="height:80px;object-fit:cover" alt="">
+                            <div class="form-check form-check-inline small">
+                                <input class="form-check-input" type="radio" name="primary_image" value="{{ $image->id }}" id="primary-{{ $image->id }}" @checked($image->is_primary)>
+                                <label class="form-check-label small" for="primary-{{ $image->id }}">Utama</label>
+                            </div>
+                            <div class="form-check small">
+                                <input class="form-check-input" type="checkbox" name="delete_images[]" value="{{ $image->id }}" id="del-{{ $image->id }}">
+                                <label class="form-check-label small text-danger" for="del-{{ $image->id }}">Hapus</label>
+                            </div>
+                        </div>
                     </div>
                 @endforeach
             </div>
         @endif
-
-        <input type="file" name="images[]" id="images" accept="image/*" multiple
-               class="block w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
-        <p class="text-xs text-gray-400 mt-1">Bisa pilih beberapa gambar sekaligus. Maksimal 2MB per gambar.</p>
-        <p class="text-xs text-indigo-600 mt-1 font-medium">Ukuran gambar terbaik: 800 x 800 px (persegi). Format: JPG, PNG, atau WEBP.</p>
+        <input type="file" name="images[]" id="images" accept="image/*" multiple class="form-control">
+        <div class="form-text">Bisa pilih beberapa gambar. Maks 2MB per gambar. Ukuran terbaik: 800×800 px.</div>
     </div>
 
-    <div class="flex items-center gap-3 pt-2">
-        <button type="submit"
-                class="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-md">
-            Simpan
-        </button>
-        <a href="{{ route('admin.products.index') }}" class="text-sm text-gray-500 hover:text-gray-700">Batal</a>
+    {{-- Submit --}}
+    <div class="d-flex gap-2 pt-2">
+        <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-1"></i> Simpan</button>
+        <a href="{{ route('admin.products.index') }}" class="btn btn-light">Batal</a>
     </div>
 </div>
 
@@ -176,27 +168,14 @@
     <script>
         function sizeEditor(initial) {
             return {
-                rows: (initial || []).map(r => ({
-                    label: r.label ?? '',
-                    price: r.price ?? '',
-                    stock_status: r.stock_status ?? 'tersedia',
-                })),
-                addRow() {
-                    this.rows.push({ label: '', price: '', stock_status: 'tersedia' });
-                },
-                removeRow(idx) {
-                    this.rows.splice(idx, 1);
-                },
+                rows: (initial || []).map(r => ({ label: r.label ?? '', price: r.price ?? '', stock_status: r.stock_status ?? 'tersedia' })),
+                addRow() { this.rows.push({ label: '', price: '', stock_status: 'tersedia' }); },
+                removeRow(idx) { this.rows.splice(idx, 1); },
             };
         }
-
         document.addEventListener('DOMContentLoaded', function () {
-            // Editor deskripsi (tanpa tabel).
-            document.querySelectorAll('.ckeditor-rich').forEach(function (el) {
-                ClassicEditor.create(el).catch(console.error);
-            });
-            // Editor size chart (dengan tabel).
-            document.querySelectorAll('.ckeditor-table').forEach(function (el) {
+            document.querySelectorAll('.ckeditor-rich').forEach(el => ClassicEditor.create(el).catch(console.error));
+            document.querySelectorAll('.ckeditor-table').forEach(el => {
                 ClassicEditor.create(el, {
                     toolbar: ['heading', '|', 'bold', 'italic', '|', 'insertTable', '|', 'undo', 'redo'],
                     table: { contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells'] },
