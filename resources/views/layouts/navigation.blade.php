@@ -15,8 +15,17 @@
                     <x-nav-link :href="route('admin.products.index')" :active="request()->routeIs('admin.products.*')">
                         {{ __('Produk') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('admin.categories.index')" :active="request()->routeIs('admin.categories.*')">
+                        {{ __('Kategori') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('admin.tags.index')" :active="request()->routeIs('admin.tags.*')">
+                        {{ __('Tag') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('admin.banners.index')" :active="request()->routeIs('admin.banners.*')">
+                        {{ __('Banner') }}
+                    </x-nav-link>
                     <x-nav-link :href="route('admin.settings.edit')" :active="request()->routeIs('admin.settings.*')">
-                        {{ __('Pengaturan WA') }}
+                        {{ __('Pengaturan') }}
                     </x-nav-link>
                 </div>
             </div>

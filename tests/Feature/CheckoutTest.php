@@ -17,6 +17,7 @@ class CheckoutTest extends TestCase
 
         Setting::put(Setting::WHATSAPP_NUMBER, '6281234567890');
         Setting::put(Setting::CHECKOUT_TEMPLATE, Setting::DEFAULT_TEMPLATE);
+        Setting::put(Setting::CART_TEMPLATE, Setting::DEFAULT_CART_TEMPLATE);
     }
 
     public function test_checkout_redirects_to_whatsapp_with_encoded_message(): void
@@ -30,6 +31,7 @@ class CheckoutTest extends TestCase
         $response = $this->post('/checkout', [
             'product_id' => $product->id,
             'customer_name' => 'Budi',
+            'address' => 'Jl. Contoh No. 1, Sidoarjo',
             'quantity' => 2,
         ]);
 
@@ -37,10 +39,10 @@ class CheckoutTest extends TestCase
         $target = $response->headers->get('Location');
 
         $this->assertStringStartsWith('https://wa.me/6281234567890?text=', $target);
-        // Subtotal 85.000 x 2 = 170.000 dihitung di server.
         $this->assertStringContainsString(urlencode('Rp 170.000'), $target);
         $this->assertStringContainsString(urlencode('Budi'), $target);
         $this->assertStringContainsString(urlencode('REGULER'), $target);
+        $this->assertStringContainsString(urlencode('Alamat'), $target);
     }
 
     public function test_checkout_uses_preorder_label_for_preorder_product(): void
@@ -54,6 +56,7 @@ class CheckoutTest extends TestCase
         $target = $this->post('/checkout', [
             'product_id' => $product->id,
             'customer_name' => 'Ani',
+            'address' => 'Jl. Test',
             'quantity' => 1,
         ])->headers->get('Location');
 
@@ -71,18 +74,22 @@ class CheckoutTest extends TestCase
         $response = $this->from('/product/' . $product->slug)->post('/checkout', [
             'product_id' => $product->id,
             'customer_name' => 'Ani',
+            'address' => 'Jl. Test',
             'quantity' => 1,
         ]);
 
-        // Tidak boleh redirect ke wa.me; harus kembali dengan error.
         $response->assertRedirect('/product/' . $product->slug);
         $response->assertSessionHas('error');
     }
 
     public function test_checkout_validates_required_fields(): void
     {
-        $response = $this->post('/checkout', []);
-        $response->assertSessionHasErrors(['product_id', 'customer_name', 'quantity']);
+        $product = Product::create([
+            'name' => 'Test P', 'price' => 10000,
+            'stock_status' => Product::STATUS_AVAILABLE,
+        ]);
+        $response = $this->post('/checkout', ['product_id' => $product->id]);
+        $response->assertSessionHasErrors(['customer_name', 'address', 'quantity']);
     }
 
     public function test_notes_line_is_omitted_when_notes_empty(): void
@@ -96,6 +103,7 @@ class CheckoutTest extends TestCase
         $target = $this->post('/checkout', [
             'product_id' => $product->id,
             'customer_name' => 'Budi',
+            'address' => 'Jl. Test',
             'quantity' => 1,
         ])->headers->get('Location');
 
@@ -117,6 +125,7 @@ class CheckoutTest extends TestCase
         $response = $this->post('/checkout', [
             'product_id' => $product->id,
             'customer_name' => 'Budi',
+            'address' => 'Jl. Test',
             'quantity' => 1,
         ]);
 
@@ -138,14 +147,13 @@ class CheckoutTest extends TestCase
             'product_id' => $product->id,
             'size_id' => $sizeL->id,
             'customer_name' => 'Budi',
+            'address' => 'Jl. Test',
             'quantity' => 2,
         ])->headers->get('Location');
 
         $decoded = urldecode($target);
-        // 265.000 x 2 = 530.000, harga diambil dari ukuran L.
         $this->assertStringContainsString('Rp 530.000', $decoded);
         $this->assertStringContainsString('Ukuran: L', $decoded);
-        // Status order mengikuti ukuran (pre-order).
         $this->assertStringContainsString('PRE-ORDER', $decoded);
     }
 
@@ -164,6 +172,7 @@ class CheckoutTest extends TestCase
             'product_id' => $product->id,
             'size_id' => $sizeHabis->id,
             'customer_name' => 'Ani',
+            'address' => 'Jl. Test',
             'quantity' => 1,
         ]);
 

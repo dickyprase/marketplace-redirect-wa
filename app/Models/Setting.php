@@ -17,18 +17,25 @@ class Setting extends Model
     /**
      * Setting key constants.
      */
-    public const WHATSAPP_NUMBER = 'whatsapp_number';
-    public const CHECKOUT_TEMPLATE = 'checkout_template';
+    public const WHATSAPP_NUMBER    = 'whatsapp_number';
+    public const CHECKOUT_TEMPLATE  = 'checkout_template';
+    public const CART_TEMPLATE      = 'cart_template';
+
+    // --- Kontak ---
+    public const CONTACT_ADDRESS    = 'contact_address';
+    public const CONTACT_EMAIL      = 'contact_email';
+    public const CONTACT_PHONE      = 'contact_phone';
+    public const CONTACT_HOURS      = 'contact_hours';
+    public const CONTACT_MAPS_EMBED = 'contact_maps_embed';
 
     /**
-     * Default checkout message template. Supports placeholders and
-     * WhatsApp-style formatting (*bold*, _italic_, ~strike~, ```mono```).
+     * Default checkout message template (single-item / checkout langsung).
      */
     public const DEFAULT_TEMPLATE = <<<'TPL'
 *Pesanan Baru*
 
 Nama Pembeli: {customer_name}
-{notes_line}Status Order: {order_status}
+{address_line}{notes_line}Status Order: {order_status}
 
 ------------------------------
 Produk   : {product_name}
@@ -37,6 +44,20 @@ QTY      : {quantity}
 Subtotal : {subtotal}
 ------------------------------
 *Total    : {total}*
+TPL;
+
+    /**
+     * Default cart (multi-item) template.
+     */
+    public const DEFAULT_CART_TEMPLATE = <<<'TPL'
+*Pesanan Baru*
+
+Nama Pembeli: {customer_name}
+{address_line}{notes_line}
+------------------------------
+{items}
+------------------------------
+*Total    : {grand_total}*
 TPL;
 
     /**

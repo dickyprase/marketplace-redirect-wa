@@ -53,6 +53,37 @@
         </select>
     </div>
 
+    {{-- Kategori --}}
+    <div>
+        <label for="category_id" class="block text-sm font-medium text-gray-700 mb-1">Kategori</label>
+        <select name="category_id" id="category_id"
+                class="w-full rounded-lg border-gray-300 focus:border-indigo-500 focus:ring-indigo-500">
+            <option value="">— Tanpa kategori —</option>
+            @foreach (($categories ?? collect()) as $cat)
+                <option value="{{ $cat->id }}" @selected(old('category_id', $product->category_id ?? null) == $cat->id)>{{ $cat->name }}</option>
+            @endforeach
+        </select>
+    </div>
+
+    {{-- Tag promo --}}
+    <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Tag Promo</label>
+        @php
+            $selectedTagIds = old('tags', isset($product) ? $product->tags->pluck('id')->all() : []);
+        @endphp
+        <div class="flex flex-wrap gap-2">
+            @foreach (($tags ?? collect()) as $tag)
+                <label class="inline-flex items-center gap-1 px-3 py-1.5 border rounded-lg cursor-pointer">
+                    <input type="checkbox" name="tags[]" value="{{ $tag->id }}" @checked(in_array($tag->id, $selectedTagIds))>
+                    <span class="text-sm">{{ $tag->name }}</span>
+                </label>
+            @endforeach
+            @if (($tags ?? collect())->isEmpty())
+                <p class="text-sm text-gray-400">Belum ada tag. Buat tag di menu "Tag Promo".</p>
+            @endif
+        </div>
+    </div>
+
     {{-- Deskripsi (CKEditor) --}}
     <div>
         <label for="description" class="block text-sm font-medium text-gray-700 mb-1">Deskripsi</label>
@@ -128,6 +159,7 @@
         <input type="file" name="images[]" id="images" accept="image/*" multiple
                class="block w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
         <p class="text-xs text-gray-400 mt-1">Bisa pilih beberapa gambar sekaligus. Maksimal 2MB per gambar.</p>
+        <p class="text-xs text-indigo-600 mt-1 font-medium">Ukuran gambar terbaik: 800 x 800 px (persegi). Format: JPG, PNG, atau WEBP.</p>
     </div>
 
     <div class="flex items-center gap-3 pt-2">

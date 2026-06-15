@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Category;
 use App\Models\Product;
+use App\Models\Tag;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -18,7 +20,7 @@ class ProductController extends Controller
      */
     public function index(): View
     {
-        $products = Product::with(['images', 'sizes'])->latest()->paginate(15);
+        $products = Product::with(['images', 'sizes', 'category', 'tags'])->latest()->paginate(15);
 
         return view('admin.products.index', compact('products'));
     }
@@ -28,7 +30,9 @@ class ProductController extends Controller
      */
     public function create(): View
     {
-        return view('admin.products.create');
+        $categories = Category::orderBy('name')->get();
+        $tags = Tag::orderBy('name')->get();
+        return view('admin.products.create', compact('categories', 'tags'));
     }
 
     /**
@@ -42,6 +46,7 @@ class ProductController extends Controller
             $product = Product::create($this->productAttributes($validated));
 
             $this->syncSizes($product, $validated['sizes'] ?? []);
+            $product->tags()->sync($validated['tags'] ?? []);
             $this->storeImages($product, $request);
             $this->ensurePrimaryImage($product);
 
@@ -58,9 +63,11 @@ class ProductController extends Controller
      */
     public function edit(Product $product): View
     {
-        $product->load(['images', 'sizes']);
+        $product->load(['images', 'sizes', 'tags']);
+        $categories = Category::orderBy('name')->get();
+        $tags = Tag::orderBy('name')->get();
 
-        return view('admin.products.edit', compact('product'));
+        return view('admin.products.edit', compact('product', 'categories', 'tags'));
     }
 
     /**
@@ -74,6 +81,7 @@ class ProductController extends Controller
             $product->update($this->productAttributes($validated));
 
             $this->syncSizes($product, $validated['sizes'] ?? []);
+            $product->tags()->sync($validated['tags'] ?? []);
             $this->deleteSelectedImages($product, $request);
             $this->storeImages($product, $request);
             $this->applyPrimarySelection($product, $request);
@@ -114,6 +122,9 @@ class ProductController extends Controller
         return $request->validate([
             'name'                 => ['required', 'string', 'max:150'],
             'description'          => ['nullable', 'string'],
+            'category_id'          => ['nullable', 'integer', 'exists:categories,id'],
+            'tags'                 => ['nullable', 'array'],
+            'tags.*'               => ['integer', 'exists:tags,id'],
             'size_chart'           => ['nullable', 'string'],
             'price'                => ['required', 'numeric', 'min:0'],
             'stock_status'         => ['required', 'in:tersedia,tidak tersedia,pre order'],
@@ -139,6 +150,7 @@ class ProductController extends Controller
     {
         return [
             'name'         => $validated['name'],
+            'category_id'  => $validated['category_id'] ?? null,
             'description'  => ! empty($validated['description'])
                 ? Purifier::clean($validated['description'], 'description')
                 : null,

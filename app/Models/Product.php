@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
 
@@ -20,6 +22,7 @@ class Product extends Model
         'name',
         'slug',
         'description',
+        'category_id',
         'size_chart',
         'price',
         'stock_status',
@@ -111,6 +114,22 @@ class Product extends Model
     public function orderLabel(): string
     {
         return $this->isPreOrder() ? 'PRE-ORDER' : 'REGULER';
+    }
+
+    /**
+     * Kategori produk.
+     */
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(Category::class);
+    }
+
+    /**
+     * Tag promo (many-to-many).
+     */
+    public function tags(): BelongsToMany
+    {
+        return $this->belongsToMany(Tag::class);
     }
 
     /**

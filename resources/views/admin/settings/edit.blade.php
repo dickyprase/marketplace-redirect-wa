@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">Pengaturan WhatsApp</h2>
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">Pengaturan</h2>
     </x-slot>
 
     <div class="py-8" x-data="settingsForm()">
@@ -27,28 +27,23 @@
 
                 {{-- Nomor WhatsApp --}}
                 <div>
-                    <label for="whatsapp_number" class="block text-sm font-medium text-gray-700 mb-1">
-                        Nomor WhatsApp Admin
-                    </label>
+                    <label for="whatsapp_number" class="block text-sm font-medium text-gray-700 mb-1">Nomor WhatsApp Admin</label>
                     <input type="text" name="whatsapp_number" id="whatsapp_number"
                            value="{{ old('whatsapp_number', $settings['whatsapp_number']) }}"
                            class="w-full rounded-lg border-gray-300 focus:border-indigo-500 focus:ring-indigo-500"
                            placeholder="6281234567890">
-                    <p class="text-xs text-gray-400 mt-1">
-                        Format internasional tanpa tanda <code>+</code> atau spasi. Contoh: <code>6281234567890</code>.
-                    </p>
+                    <p class="text-xs text-gray-400 mt-1">Format internasional tanpa <code>+</code> atau spasi.</p>
                 </div>
 
+                {{-- Template checkout langsung --}}
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    {{-- Editor template --}}
                     <div>
                         <label for="checkout_template" class="block text-sm font-medium text-gray-700 mb-1">
-                            Template Pesan Checkout
+                            Template Pesan Checkout Langsung
                         </label>
                         <textarea name="checkout_template" id="checkout_template" rows="16"
                                   x-model="template" @input.debounce.400ms="refreshPreview()"
                                   class="w-full font-mono text-sm rounded-lg border-gray-300 focus:border-indigo-500 focus:ring-indigo-500">{{ old('checkout_template', $settings['checkout_template']) }}</textarea>
-
                         <div class="mt-3 text-xs text-gray-500">
                             <p class="font-semibold text-gray-600 mb-1">Styling WhatsApp:</p>
                             <p><code>*tebal*</code> &rarr; <strong>tebal</strong> &middot;
@@ -57,8 +52,6 @@
                                <code>```mono```</code> &rarr; <code class="bg-gray-200 px-1 rounded">mono</code></p>
                         </div>
                     </div>
-
-                    {{-- Preview live --}}
                     <div>
                         <span class="block text-sm font-medium text-gray-700 mb-1">Pratinjau (data contoh)</span>
                         <div class="rounded-lg border border-gray-200 bg-[#e5ddd5] p-4 min-h-[20rem]">
@@ -68,9 +61,9 @@
                     </div>
                 </div>
 
-                {{-- Daftar placeholder --}}
+                {{-- Daftar placeholder checkout --}}
                 <div class="border-t border-gray-100 pt-4">
-                    <p class="text-sm font-semibold text-gray-700 mb-2">Placeholder yang tersedia</p>
+                    <p class="text-sm font-semibold text-gray-700 mb-2">Placeholder checkout langsung</p>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1 text-sm">
                         @foreach ($placeholders as $code => $desc)
                             <div class="flex items-start gap-2">
@@ -79,6 +72,52 @@
                                 <span class="text-gray-500">— {{ $desc }}</span>
                             </div>
                         @endforeach
+                    </div>
+                </div>
+
+                {{-- Template keranjang (multi-item) --}}
+                <div class="border-t border-gray-100 pt-4">
+                    <label for="cart_template" class="block text-sm font-medium text-gray-700 mb-1">
+                        Template Pesan Keranjang (Multi-Item)
+                    </label>
+                    <textarea name="cart_template" id="cart_template" rows="10"
+                              class="w-full font-mono text-sm rounded-lg border-gray-300 focus:border-indigo-500 focus:ring-indigo-500">{{ old('cart_template', $settings['cart_template']) }}</textarea>
+                    <p class="text-xs text-gray-400 mt-1">
+                        Placeholder: <code>{customer_name}</code>, <code>{notes_line}</code>, <code>{items}</code>, <code>{grand_total}</code>
+                    </p>
+                </div>
+
+                {{-- Informasi Kontak --}}
+                <div class="border-t border-gray-100 pt-4">
+                    <h3 class="text-base font-semibold text-gray-800 mb-4">Informasi Kontak</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Alamat</label>
+                            <input type="text" name="contact_address" value="{{ old('contact_address', $settings['contact_address']) }}"
+                                   class="w-full rounded-lg border-gray-300 focus:border-indigo-500 focus:ring-indigo-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                            <input type="email" name="contact_email" value="{{ old('contact_email', $settings['contact_email']) }}"
+                                   class="w-full rounded-lg border-gray-300 focus:border-indigo-500 focus:ring-indigo-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">No. WhatsApp</label>
+                            <input type="text" name="contact_phone" value="{{ old('contact_phone', $settings['contact_phone']) }}"
+                                   class="w-full rounded-lg border-gray-300 focus:border-indigo-500 focus:ring-indigo-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Jam Kerja</label>
+                            <input type="text" name="contact_hours" value="{{ old('contact_hours', $settings['contact_hours']) }}"
+                                   class="w-full rounded-lg border-gray-300 focus:border-indigo-500 focus:ring-indigo-500"
+                                   placeholder="Senin-Minggu : 09.00 - 17.00">
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Google Maps Embed URL</label>
+                        <textarea name="contact_maps_embed" rows="3"
+                                  class="w-full font-mono text-sm rounded-lg border-gray-300 focus:border-indigo-500 focus:ring-indigo-500">{{ old('contact_maps_embed', $settings['contact_maps_embed']) }}</textarea>
+                        <p class="text-xs text-gray-400 mt-1">Tempel kode iframe <code>&lt;iframe ...&gt;&lt;/iframe&gt;</code> dari Google Maps.</p>
                     </div>
                 </div>
 
@@ -113,9 +152,7 @@
                             const data = await res.json();
                             this.preview = data.html;
                         }
-                    } catch (e) {
-                        // Abaikan error preview; tidak mengganggu penyimpanan.
-                    }
+                    } catch (e) {}
                 },
                 insertPlaceholder(code) {
                     const el = document.getElementById('checkout_template');

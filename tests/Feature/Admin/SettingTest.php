@@ -25,11 +25,12 @@ class SettingTest extends TestCase
     {
         Setting::put(Setting::WHATSAPP_NUMBER, '6281111111111');
         Setting::put(Setting::CHECKOUT_TEMPLATE, Setting::DEFAULT_TEMPLATE);
+        Setting::put(Setting::CART_TEMPLATE, Setting::DEFAULT_CART_TEMPLATE);
 
         $response = $this->actingAs($this->admin())->get('/admin/settings');
 
         $response->assertOk();
-        $response->assertSee('Pengaturan WhatsApp');
+        $response->assertSee('Pengaturan');
         $response->assertSee('6281111111111');
         $response->assertSee('{customer_name}');
     }
@@ -39,6 +40,7 @@ class SettingTest extends TestCase
         $response = $this->actingAs($this->admin())->put('/admin/settings', [
             'whatsapp_number' => '6289999999999',
             'checkout_template' => 'Halo {customer_name}, total {total}',
+            'cart_template' => 'Order: {customer_name} - {grand_total}',
         ]);
 
         $response->assertRedirect(route('admin.settings.edit'));
@@ -46,6 +48,7 @@ class SettingTest extends TestCase
 
         $this->assertSame('6289999999999', Setting::get(Setting::WHATSAPP_NUMBER));
         $this->assertSame('Halo {customer_name}, total {total}', Setting::get(Setting::CHECKOUT_TEMPLATE));
+        $this->assertSame('Order: {customer_name} - {grand_total}', Setting::get(Setting::CART_TEMPLATE));
     }
 
     public function test_invalid_whatsapp_number_is_rejected(): void
@@ -53,6 +56,7 @@ class SettingTest extends TestCase
         $response = $this->actingAs($this->admin())->put('/admin/settings', [
             'whatsapp_number' => '+62 812-3456',
             'checkout_template' => 'Halo {customer_name}',
+            'cart_template' => 'Order: {customer_name}',
         ]);
 
         $response->assertSessionHasErrors('whatsapp_number');
