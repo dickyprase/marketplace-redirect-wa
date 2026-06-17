@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Login — {{ config('app.name') }}</title>
+    <title>Login — {{ \App\Models\Setting::get('site_name', config('app.name')) }}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -19,7 +19,7 @@
             <div class="d-inline-flex align-items-center justify-content-center bg-primary text-white rounded-3 mb-3" style="width:48px;height:48px">
                 <i class="bi bi-bag-check fs-4"></i>
             </div>
-            <h4 class="fw-bold">{{ config('app.name') }}</h4>
+            <h4 class="fw-bold">{{ \App\Models\Setting::get('site_name', config('app.name')) }}</h4>
             <p class="text-muted small">Masuk ke panel admin</p>
         </div>
 

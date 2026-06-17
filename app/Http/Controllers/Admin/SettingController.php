@@ -22,6 +22,7 @@ class SettingController extends Controller
     public function edit(): View
     {
         $settings = [
+            'site_name'          => Setting::get(Setting::SITE_NAME, config('app.name')),
             'whatsapp_number'    => Setting::get(Setting::WHATSAPP_NUMBER, ''),
             'checkout_template'  => Setting::get(Setting::CHECKOUT_TEMPLATE, Setting::DEFAULT_TEMPLATE),
             'cart_template'      => Setting::get(Setting::CART_TEMPLATE, Setting::DEFAULT_CART_TEMPLATE),
@@ -44,6 +45,7 @@ class SettingController extends Controller
     public function update(Request $request): RedirectResponse
     {
         $validated = $request->validate([
+            'site_name'          => ['required', 'string', 'max:100'],
             'whatsapp_number'    => ['required', 'string', 'regex:/^[0-9]{8,20}$/'],
             'checkout_template'  => ['required', 'string', 'max:5000'],
             'cart_template'      => ['required', 'string', 'max:5000'],
@@ -56,6 +58,7 @@ class SettingController extends Controller
             'whatsapp_number.regex' => 'Nomor WhatsApp harus berupa angka (format internasional tanpa +), contoh: 6281234567890.',
         ]);
 
+        Setting::put(Setting::SITE_NAME, $validated['site_name']);
         Setting::put(Setting::WHATSAPP_NUMBER, $validated['whatsapp_number']);
         Setting::put(Setting::CHECKOUT_TEMPLATE, $validated['checkout_template']);
         Setting::put(Setting::CART_TEMPLATE, $validated['cart_template']);

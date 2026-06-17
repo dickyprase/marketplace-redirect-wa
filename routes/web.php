@@ -39,7 +39,7 @@ Route::post('/checkout', [CheckoutController::class, 'process'])->name('checkout
 */
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', function () {
-        return redirect()->route('admin.products.index');
+        return view('dashboard');
     })->name('dashboard');
 
     Route::prefix('admin')->name('admin.')->group(function () {

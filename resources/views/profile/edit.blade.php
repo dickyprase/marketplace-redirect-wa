@@ -70,37 +70,5 @@
         </div>
     </div>
 
-    {{-- Delete Account --}}
-    <div class="card border-0 shadow-sm border-top border-danger">
-        <div class="card-body p-4">
-            <h6 class="fw-bold text-danger mb-1">Hapus Akun</h6>
-            <p class="text-muted small mb-3">Setelah dihapus, semua data akan hilang permanen.</p>
-            <button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal">Hapus Akun</button>
-        </div>
-    </div>
-</div>
 
-{{-- Delete Modal --}}
-<div class="modal fade" id="deleteModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form method="POST" action="{{ route('profile.destroy') }}">
-                @csrf @method('DELETE')
-                <div class="modal-header">
-                    <h5 class="modal-title">Hapus Akun?</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <p class="text-muted">Semua data akan dihapus permanen. Masukkan password untuk konfirmasi.</p>
-                    <input type="password" name="password" class="form-control" placeholder="Password">
-                    @error('password', 'userDeletion')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-danger">Hapus Permanen</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
 @endsection

@@ -22,6 +22,7 @@ class Setting extends Model
     public const CART_TEMPLATE      = 'cart_template';
 
     // --- Kontak ---
+    public const SITE_NAME         = 'site_name';
     public const CONTACT_ADDRESS    = 'contact_address';
     public const CONTACT_EMAIL      = 'contact_email';
     public const CONTACT_PHONE      = 'contact_phone';

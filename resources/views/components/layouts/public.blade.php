@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $title ?? config('app.name') }}</title>
+    <title>{{ $title ?? \App\Models\Setting::get('site_name', config('app.name')) }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>[x-cloak]{display:none !important;}</style>
 </head>
@@ -11,7 +11,7 @@
     <header class="bg-white shadow-sm">
         <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
             <a href="{{ route('products.index') }}" class="text-xl font-bold text-gray-800">
-                {{ config('app.name') }}
+                {{ \App\Models\Setting::get('site_name', config('app.name')) }}
             </a>
             <nav class="text-sm">
                 @auth
@@ -40,7 +40,7 @@
 
     <footer class="bg-white border-t mt-8">
         <div class="max-w-6xl mx-auto px-4 py-6 text-center text-sm text-gray-400">
-            &copy; {{ date('Y') }} {{ config('app.name') }}. Checkout via WhatsApp.
+            &copy; {{ date('Y') }} {{ \App\Models\Setting::get('site_name', config('app.name')) }}. Checkout via WhatsApp.
         </div>
     </footer>
 

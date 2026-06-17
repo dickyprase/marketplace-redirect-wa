@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ $title ?? 'Admin' }} - {{ config('app.name') }}</title>
+    <title>{{ $title ?? 'Admin' }} - {{ \App\Models\Setting::get('site_name', config('app.name')) }}</title>
     <link rel="shortcut icon" href="{{ asset('mazer/static/images/logo/favicon.svg') }}" type="image/x-icon">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
@@ -232,7 +232,7 @@
         <div class="sidebar-header position-relative">
             <div class="d-flex justify-content-between align-items-center">
                 <a href="{{ route('admin.dashboard') }}" class="logo text-decoration-none">
-                    <span>⚡ {{ config('app.name') }}</span>
+                    <span>⚡ {{ \App\Models\Setting::get('site_name', config('app.name')) }}</span>
                 </a>
                 <a href="#" class="sidebar-hide d-xl-none d-block"><i class="bi bi-x-lg"></i></a>
             </div>

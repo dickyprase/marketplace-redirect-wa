@@ -1,4 +1,4 @@
-<x-layouts.store :title="config('app.name')">
+<x-layouts.store :title="\App\Models\Setting::get('site_name', config('app.name'))">
 
   <!-- Hero Section -->
   @if ($banners->isNotEmpty())
