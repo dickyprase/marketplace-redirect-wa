@@ -19,7 +19,7 @@
   <header id="header" class="header d-flex align-items-center sticky-top">
     <div class="container position-relative d-flex align-items-center justify-content-between">
       <a href="{{ route('home') }}" class="logo d-flex align-items-center me-auto me-xl-0">
-        <h1 class="sitename">MarketPlace</h1>
+        <h1 class="sitename">{{ \App\Models\Setting::get('site_name', config('app.name')) }}</h1>
       </a>
 
       <nav id="navmenu" class="navmenu">
@@ -147,7 +147,7 @@
         <div class="col-lg-4">
           <div class="footer-brand">
             <a href="{{ route('home') }}" class="logo d-flex align-items-center mb-3">
-              <span class="sitename">MarketPlace</span>
+              <span class="sitename">{{ \App\Models\Setting::get('site_name', config('app.name')) }}</span>
             </a>
             <p class="tagline">Inovasi market digital dengan solusi elegan.</p>
             <div class="social-links mt-4">
@@ -201,7 +201,7 @@
         <div class="row">
           <div class="col-12">
             <div class="footer-bottom-content">
-              <p class="mb-0">&copy; <strong>MarketPlace</strong>. All rights reserved.</p>
+              <p class="mb-0">&copy; <strong>{{ \App\Models\Setting::get('site_name', config('app.name')) }}</strong>. All rights reserved.</p>
             </div>
           </div>
         </div>
