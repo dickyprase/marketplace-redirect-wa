@@ -48,6 +48,9 @@ Route::middleware('auth')->group(function () {
         Route::resource('tags', AdminTagController::class)->except(['show']);
         Route::resource('banners', AdminBannerController::class)->except(['show']);
 
+        Route::get('site-settings', [AdminSettingController::class, 'siteEdit'])->name('site-settings.edit');
+        Route::put('site-settings', [AdminSettingController::class, 'siteUpdate'])->name('site-settings.update');
+
         Route::get('settings', [AdminSettingController::class, 'edit'])->name('settings.edit');
         Route::put('settings', [AdminSettingController::class, 'update'])->name('settings.update');
         Route::post('settings/preview', [AdminSettingController::class, 'preview'])->name('settings.preview');
