@@ -40,7 +40,7 @@
                 @if ($cat->image_path)
                   <img src="{{ asset('storage/' . $cat->image_path) }}" alt="{{ $cat->name }}" loading="lazy">
                 @else
-                  <div style="height:400px;display:flex;align-items:center;justify-content:center;background:#f0f1f2;"><span class="text-muted">{{ $cat->name }}</span></div>
+                  <img src="{{ asset('assets/img/category/' . $cat->slug . '.svg') }}" alt="{{ $cat->name }}" loading="lazy">
                 @endif
                 <div class="category-badge">{{ $cat->name }}</div>
               </div>
