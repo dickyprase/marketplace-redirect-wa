@@ -74,9 +74,9 @@
           <div class="social-links-panel">
             <h5>Follow Us</h5>
             <div class="social-icons">
-              <a href="#"><i class="bi bi-facebook"></i></a>
-              <a href="#"><i class="bi bi-instagram"></i></a>
-              <a href="#"><i class="bi bi-threads"></i></a>
+              <a href="{{ \App\Models\Setting::get(\App\Models\Setting::SOCIAL_FACEBOOK, '#') }}" target="_blank" rel="noopener noreferrer"><i class="bi bi-facebook"></i></a>
+              <a href="{{ \App\Models\Setting::get(\App\Models\Setting::SOCIAL_INSTAGRAM, '#') }}" target="_blank" rel="noopener noreferrer"><i class="bi bi-instagram"></i></a>
+              <a href="{{ \App\Models\Setting::get(\App\Models\Setting::SOCIAL_THREADS, '#') }}" target="_blank" rel="noopener noreferrer"><i class="bi bi-threads"></i></a>
             </div>
           </div>
         </div>

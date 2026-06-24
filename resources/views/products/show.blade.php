@@ -4,6 +4,36 @@
     $images = $product->images;
 @endphp
 
+@push('styles')
+<style>
+  .size-chart-content { overflow-x: auto; }
+  .size-chart-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0;
+    background: #fff;
+    font-size: 0.95rem;
+  }
+  .size-chart-content th,
+  .size-chart-content td {
+    border: 1px solid #e5e7eb;
+    padding: 12px 14px;
+    text-align: center;
+    vertical-align: middle;
+  }
+  .size-chart-content th {
+    background: #111827;
+    color: #fff;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  .size-chart-content tr:nth-child(even) td {
+    background: #f9fafb;
+  }
+  .size-chart-content p:last-child { margin-bottom: 0; }
+</style>
+@endpush
+
 <main class="main">
   <section id="detail-product" class="detail-product section">
     <div class="container" data-aos="fade-up" data-aos-delay="100">
@@ -152,7 +182,9 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          {!! $product->size_chart !!}
+          <div class="size-chart-content">
+            {!! $product->size_chart !!}
+          </div>
         </div>
       </div>
     </div>

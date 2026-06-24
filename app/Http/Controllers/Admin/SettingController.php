@@ -17,20 +17,66 @@ class SettingController extends Controller
     }
 
     /**
-     * Tampilkan form pengaturan.
+     * Tampilkan form pengaturan site umum.
      */
-    public function edit(): View
+    public function siteEdit(): View
     {
         $settings = [
             'site_name'          => Setting::get(Setting::SITE_NAME, config('app.name')),
-            'whatsapp_number'    => Setting::get(Setting::WHATSAPP_NUMBER, ''),
-            'checkout_template'  => Setting::get(Setting::CHECKOUT_TEMPLATE, Setting::DEFAULT_TEMPLATE),
-            'cart_template'      => Setting::get(Setting::CART_TEMPLATE, Setting::DEFAULT_CART_TEMPLATE),
             'contact_address'    => Setting::get(Setting::CONTACT_ADDRESS, ''),
             'contact_email'      => Setting::get(Setting::CONTACT_EMAIL, ''),
             'contact_phone'      => Setting::get(Setting::CONTACT_PHONE, ''),
             'contact_hours'      => Setting::get(Setting::CONTACT_HOURS, ''),
             'contact_maps_embed' => Setting::get(Setting::CONTACT_MAPS_EMBED, ''),
+            'social_facebook'    => Setting::get(Setting::SOCIAL_FACEBOOK, ''),
+            'social_instagram'   => Setting::get(Setting::SOCIAL_INSTAGRAM, ''),
+            'social_threads'     => Setting::get(Setting::SOCIAL_THREADS, ''),
+        ];
+
+        return view('admin.settings.site', compact('settings'));
+    }
+
+    /**
+     * Simpan pengaturan site umum.
+     */
+    public function siteUpdate(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'site_name'          => ['required', 'string', 'max:100'],
+            'contact_address'    => ['nullable', 'string', 'max:500'],
+            'contact_email'      => ['nullable', 'string', 'email', 'max:150'],
+            'contact_phone'      => ['nullable', 'string', 'max:50'],
+            'contact_hours'      => ['nullable', 'string', 'max:200'],
+            'contact_maps_embed' => ['nullable', 'string', 'max:2000'],
+            'social_facebook'    => ['nullable', 'max:255'],
+            'social_instagram'   => ['nullable', 'max:255'],
+            'social_threads'     => ['nullable', 'max:255'],
+        ]);
+
+        Setting::put(Setting::SITE_NAME, $validated['site_name']);
+        Setting::put(Setting::CONTACT_ADDRESS, $validated['contact_address'] ?? null);
+        Setting::put(Setting::CONTACT_EMAIL, $validated['contact_email'] ?? null);
+        Setting::put(Setting::CONTACT_PHONE, $validated['contact_phone'] ?? null);
+        Setting::put(Setting::CONTACT_HOURS, $validated['contact_hours'] ?? null);
+        Setting::put(Setting::CONTACT_MAPS_EMBED, $validated['contact_maps_embed'] ?? null);
+        Setting::put(Setting::SOCIAL_FACEBOOK, $validated['social_facebook'] ?? null);
+        Setting::put(Setting::SOCIAL_INSTAGRAM, $validated['social_instagram'] ?? null);
+        Setting::put(Setting::SOCIAL_THREADS, $validated['social_threads'] ?? null);
+
+        return redirect()
+            ->route('admin.site-settings.edit')
+            ->with('success', 'Site setting berhasil disimpan.');
+    }
+
+    /**
+     * Tampilkan form pengaturan WhatsApp.
+     */
+    public function edit(): View
+    {
+        $settings = [
+            'whatsapp_number'    => Setting::get(Setting::WHATSAPP_NUMBER, ''),
+            'checkout_template'  => Setting::get(Setting::CHECKOUT_TEMPLATE, Setting::DEFAULT_TEMPLATE),
+            'cart_template'      => Setting::get(Setting::CART_TEMPLATE, Setting::DEFAULT_CART_TEMPLATE),
         ];
 
         $placeholders = WhatsappMessageBuilder::placeholders();
@@ -40,37 +86,25 @@ class SettingController extends Controller
     }
 
     /**
-     * Simpan pengaturan.
+     * Simpan pengaturan WhatsApp.
      */
     public function update(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'site_name'          => ['required', 'string', 'max:100'],
             'whatsapp_number'    => ['required', 'string', 'regex:/^[0-9]{8,20}$/'],
             'checkout_template'  => ['required', 'string', 'max:5000'],
             'cart_template'      => ['required', 'string', 'max:5000'],
-            'contact_address'    => ['nullable', 'string', 'max:500'],
-            'contact_email'      => ['nullable', 'string', 'email', 'max:150'],
-            'contact_phone'      => ['nullable', 'string', 'max:50'],
-            'contact_hours'      => ['nullable', 'string', 'max:200'],
-            'contact_maps_embed' => ['nullable', 'string', 'max:2000'],
         ], [
             'whatsapp_number.regex' => 'Nomor WhatsApp harus berupa angka (format internasional tanpa +), contoh: 6281234567890.',
         ]);
 
-        Setting::put(Setting::SITE_NAME, $validated['site_name']);
         Setting::put(Setting::WHATSAPP_NUMBER, $validated['whatsapp_number']);
         Setting::put(Setting::CHECKOUT_TEMPLATE, $validated['checkout_template']);
         Setting::put(Setting::CART_TEMPLATE, $validated['cart_template']);
-        Setting::put(Setting::CONTACT_ADDRESS, $validated['contact_address'] ?? null);
-        Setting::put(Setting::CONTACT_EMAIL, $validated['contact_email'] ?? null);
-        Setting::put(Setting::CONTACT_PHONE, $validated['contact_phone'] ?? null);
-        Setting::put(Setting::CONTACT_HOURS, $validated['contact_hours'] ?? null);
-        Setting::put(Setting::CONTACT_MAPS_EMBED, $validated['contact_maps_embed'] ?? null);
 
         return redirect()
             ->route('admin.settings.edit')
-            ->with('success', 'Pengaturan berhasil disimpan.');
+            ->with('success', 'Pengaturan WhatsApp berhasil disimpan.');
     }
 
     /**

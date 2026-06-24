@@ -139,8 +139,11 @@
             </a>
 
             <div class="nav-section">Pengaturan</div>
+            <a href="{{ route('admin.site-settings.edit') }}" class="nav-link {{ request()->routeIs('admin.site-settings.*') ? 'active' : '' }}">
+                <i class="bi bi-globe2"></i> Site Setting
+            </a>
             <a href="{{ route('admin.settings.edit') }}" class="nav-link {{ request()->routeIs('admin.settings.*') ? 'active' : '' }}">
-                <i class="bi bi-gear-fill"></i> WA Settings
+                <i class="bi bi-whatsapp"></i> WA Settings
             </a>
             <a href="{{ route('profile.edit') }}" class="nav-link {{ request()->routeIs('profile.*') ? 'active' : '' }}">
                 <i class="bi bi-person-fill"></i> Profil

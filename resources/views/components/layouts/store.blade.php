@@ -13,6 +13,7 @@
     <link href="{{ asset('assets/vendor/aos/aos.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/vendor/swiper/swiper-bundle.min.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/css/main.css') }}" rel="stylesheet">
+    @stack('styles')
 </head>
 <body class="index-page">
 
@@ -45,9 +46,9 @@
       </nav>
 
       <div class="header-social-links">
-        <a href="#" class="social-media threads me-2"><i class="bi bi-threads"></i></a>
-        <a href="#" class="social-media facebook me-2"><i class="bi bi-facebook"></i></a>
-        <a href="#" class="social-media instagram me-2"><i class="bi bi-instagram"></i></a>
+        <a href="{{ \App\Models\Setting::get(\App\Models\Setting::SOCIAL_THREADS, '#') }}" class="social-media threads me-2" target="_blank" rel="noopener noreferrer"><i class="bi bi-threads"></i></a>
+        <a href="{{ \App\Models\Setting::get(\App\Models\Setting::SOCIAL_FACEBOOK, '#') }}" class="social-media facebook me-2" target="_blank" rel="noopener noreferrer"><i class="bi bi-facebook"></i></a>
+        <a href="{{ \App\Models\Setting::get(\App\Models\Setting::SOCIAL_INSTAGRAM, '#') }}" class="social-media instagram me-2" target="_blank" rel="noopener noreferrer"><i class="bi bi-instagram"></i></a>
         <a class="cart me-2" data-bs-toggle="offcanvas" href="#offcanvasCart" role="button" aria-controls="offcanvasCart">
           <i class="bi bi-cart"></i>
           <span class="badge bg-danger rounded-pill" id="cart-count-badge" style="display:none">0</span>
@@ -151,9 +152,9 @@
             </a>
             <p class="tagline">Inovasi market digital dengan solusi elegan.</p>
             <div class="social-links mt-4">
-              <a href="#" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
-              <a href="#" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
-              <a href="#" aria-label="Threads"><i class="bi bi-threads"></i></a>
+              <a href="{{ \App\Models\Setting::get(\App\Models\Setting::SOCIAL_FACEBOOK, '#') }}" aria-label="Facebook" target="_blank" rel="noopener noreferrer"><i class="bi bi-facebook"></i></a>
+              <a href="{{ \App\Models\Setting::get(\App\Models\Setting::SOCIAL_INSTAGRAM, '#') }}" aria-label="Instagram" target="_blank" rel="noopener noreferrer"><i class="bi bi-instagram"></i></a>
+              <a href="{{ \App\Models\Setting::get(\App\Models\Setting::SOCIAL_THREADS, '#') }}" aria-label="Threads" target="_blank" rel="noopener noreferrer"><i class="bi bi-threads"></i></a>
             </div>
           </div>
         </div>

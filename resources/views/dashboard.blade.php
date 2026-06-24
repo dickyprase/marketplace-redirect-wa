@@ -44,9 +44,20 @@
     <div class="col-6 col-lg-3">
         <div class="card stat-card">
             <div class="card-body d-flex align-items-center gap-3">
-                <div class="stat-icon red"><i class="bi bi-gear-fill"></i></div>
+                <div class="stat-icon red"><i class="bi bi-globe2"></i></div>
                 <div>
-                    <div class="text-muted small">Settings</div>
+                    <div class="text-muted small">Site Setting</div>
+                    <a href="{{ route('admin.site-settings.edit') }}" class="fw-bold text-dark text-decoration-none">Kelola →</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="card stat-card">
+            <div class="card-body d-flex align-items-center gap-3">
+                <div class="stat-icon green"><i class="bi bi-whatsapp"></i></div>
+                <div>
+                    <div class="text-muted small">WA Settings</div>
                     <a href="{{ route('admin.settings.edit') }}" class="fw-bold text-dark text-decoration-none">Kelola →</a>
                 </div>
             </div>

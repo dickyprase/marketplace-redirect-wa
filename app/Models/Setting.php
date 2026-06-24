@@ -21,13 +21,16 @@ class Setting extends Model
     public const CHECKOUT_TEMPLATE  = 'checkout_template';
     public const CART_TEMPLATE      = 'cart_template';
 
-    // --- Kontak ---
-    public const SITE_NAME         = 'site_name';
+    // --- Site / Kontak / Sosmed ---
+    public const SITE_NAME          = 'site_name';
     public const CONTACT_ADDRESS    = 'contact_address';
     public const CONTACT_EMAIL      = 'contact_email';
     public const CONTACT_PHONE      = 'contact_phone';
     public const CONTACT_HOURS      = 'contact_hours';
     public const CONTACT_MAPS_EMBED = 'contact_maps_embed';
+    public const SOCIAL_FACEBOOK    = 'social_facebook';
+    public const SOCIAL_INSTAGRAM   = 'social_instagram';
+    public const SOCIAL_THREADS     = 'social_threads';
 
     /**
      * Default checkout message template (single-item / checkout langsung).
