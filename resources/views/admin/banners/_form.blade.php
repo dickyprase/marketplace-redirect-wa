@@ -11,7 +11,7 @@
             <img src="{{ asset('storage/'.$banner->image_path) }}" class="rounded mb-2 d-block" style="width:100%;max-height:160px;object-fit:cover" alt="">
         @endif
         <input type="file" name="image" accept="image/*" {{ $banner ? '' : 'required' }} class="form-control">
-        <div class="form-text">Ukuran terbaik: 1920×700 px. Maks 4MB.</div>
+        <div class="form-text">Ukuran terbaik: 1920×700 px. Maks 20MB.</div>
     </div>
     <div>
         <label class="form-label fw-medium">Link (opsional)</label>

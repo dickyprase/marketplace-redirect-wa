@@ -27,7 +27,7 @@ class CategoryController extends Controller
         $data = $request->validate([
             'name'       => ['required', 'string', 'max:100'],
             'sort_order' => ['nullable', 'integer', 'min:0'],
-            'image'      => ['nullable', 'image', 'max:2048'],
+            'image'      => ['nullable', 'image', 'max:20480'],
         ]);
 
         if ($request->hasFile('image')) {
@@ -50,7 +50,7 @@ class CategoryController extends Controller
         $data = $request->validate([
             'name'       => ['required', 'string', 'max:100'],
             'sort_order' => ['nullable', 'integer', 'min:0'],
-            'image'      => ['nullable', 'image', 'max:2048'],
+            'image'      => ['nullable', 'image', 'max:20480'],
         ]);
 
         if ($request->hasFile('image')) {

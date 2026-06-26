@@ -153,7 +153,7 @@
             </div>
         @endif
         <input type="file" name="images[]" id="images" accept="image/*" multiple class="form-control">
-        <div class="form-text">Bisa pilih beberapa gambar. Maks 2MB per gambar. Ukuran terbaik: 800×800 px.</div>
+        <div class="form-text">Bisa pilih beberapa gambar. Maks 20MB per gambar. Ukuran terbaik: 800×800 px.</div>
     </div>
 
     {{-- Submit --}}

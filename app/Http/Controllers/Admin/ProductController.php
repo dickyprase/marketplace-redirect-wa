@@ -129,7 +129,7 @@ class ProductController extends Controller
             'price'                => ['required', 'numeric', 'min:0'],
             'stock_status'         => ['required', 'in:tersedia,tidak tersedia,pre order'],
             'images'               => ['nullable', 'array'],
-            'images.*'             => ['image', 'max:2048'],
+            'images.*'             => ['image', 'max:20480'],
             'primary_image'        => ['nullable'],
             'delete_images'        => ['nullable', 'array'],
             'delete_images.*'      => ['integer'],

@@ -25,7 +25,7 @@ class BannerController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $data = $request->validate([
-            'image'      => ['required', 'image', 'max:4096'],
+            'image'      => ['required', 'image', 'max:20480'],
             'link'       => ['nullable', 'string', 'max:255'],
             'sort_order' => ['nullable', 'integer', 'min:0'],
             'is_active'  => ['nullable', 'boolean'],
@@ -49,7 +49,7 @@ class BannerController extends Controller
     public function update(Request $request, Banner $banner): RedirectResponse
     {
         $data = $request->validate([
-            'image'      => ['nullable', 'image', 'max:4096'],
+            'image'      => ['nullable', 'image', 'max:20480'],
             'link'       => ['nullable', 'string', 'max:255'],
             'sort_order' => ['nullable', 'integer', 'min:0'],
             'is_active'  => ['nullable', 'boolean'],
