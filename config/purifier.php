@@ -52,6 +52,13 @@ return [
             'AutoFormat.AutoParagraph' => false,
             'AutoFormat.RemoveEmpty'   => true,
         ],
+        'maps' => [
+            'HTML.SafeIframe'      => true,
+            'URI.SafeIframeRegexp' => '%^https://www\\.google\\.(com|co\\.id)/maps/embed\\?%',
+            'HTML.Allowed'         => 'iframe[src|width|height|style|allowfullscreen|loading|referrerpolicy]',
+            'AutoFormat.AutoParagraph' => false,
+            'AutoFormat.RemoveEmpty'   => true,
+        ],
         "youtube" => [
             "HTML.SafeIframe"      => 'true',
             "URI.SafeIframeRegexp" => "%^(http://|https://|//)(www.youtube.com/embed/|player.vimeo.com/video/)%",

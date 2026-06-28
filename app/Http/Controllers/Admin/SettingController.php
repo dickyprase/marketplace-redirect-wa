@@ -9,6 +9,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Mews\Purifier\Facades\Purifier;
 
 class SettingController extends Controller
 {
@@ -31,6 +32,12 @@ class SettingController extends Controller
             'social_facebook'    => Setting::get(Setting::SOCIAL_FACEBOOK, ''),
             'social_instagram'   => Setting::get(Setting::SOCIAL_INSTAGRAM, ''),
             'social_threads'     => Setting::get(Setting::SOCIAL_THREADS, ''),
+            'footer_links'       => json_decode(Setting::get('footer_links', '[]'), true) ?: [
+                ['label' => 'Shopee', 'href' => '#', 'is_visible' => true],
+                ['label' => 'Tokopedia', 'href' => '#', 'is_visible' => true],
+                ['label' => 'Kontak Kami', 'href' => route('contact'), 'is_visible' => true],
+                ['label' => 'Privacy Policy', 'href' => '#', 'is_visible' => false],
+            ],
         ];
 
         return view('admin.settings.site', compact('settings'));
@@ -51,6 +58,10 @@ class SettingController extends Controller
             'social_facebook'    => ['nullable', 'max:255'],
             'social_instagram'   => ['nullable', 'max:255'],
             'social_threads'     => ['nullable', 'max:255'],
+            'footer_links'       => ['nullable', 'array'],
+            'footer_links.*.label' => ['nullable', 'string', 'max:100'],
+            'footer_links.*.href'  => ['nullable', 'string', 'max:255'],
+            'footer_links.*.is_visible' => ['nullable', 'boolean'],
         ]);
 
         Setting::put(Setting::SITE_NAME, $validated['site_name']);
@@ -58,10 +69,26 @@ class SettingController extends Controller
         Setting::put(Setting::CONTACT_EMAIL, $validated['contact_email'] ?? null);
         Setting::put(Setting::CONTACT_PHONE, $validated['contact_phone'] ?? null);
         Setting::put(Setting::CONTACT_HOURS, $validated['contact_hours'] ?? null);
-        Setting::put(Setting::CONTACT_MAPS_EMBED, $validated['contact_maps_embed'] ?? null);
+        Setting::put(
+            Setting::CONTACT_MAPS_EMBED,
+            ! empty($validated['contact_maps_embed'])
+                ? Purifier::clean($validated['contact_maps_embed'], 'maps')
+                : null
+        );
         Setting::put(Setting::SOCIAL_FACEBOOK, $validated['social_facebook'] ?? null);
         Setting::put(Setting::SOCIAL_INSTAGRAM, $validated['social_instagram'] ?? null);
         Setting::put(Setting::SOCIAL_THREADS, $validated['social_threads'] ?? null);
+        Setting::put('footer_links', json_encode(
+            collect($validated['footer_links'] ?? [])
+                ->map(fn ($link) => [
+                    'label' => trim((string) ($link['label'] ?? '')),
+                    'href' => str_starts_with(strtolower(trim((string) ($link['href'] ?? '#'))), 'javascript:') ? '#' : (trim((string) ($link['href'] ?? '#')) ?: '#'),
+                    'is_visible' => ! empty($link['is_visible']),
+                ])
+                ->filter(fn ($link) => $link['label'] !== '')
+                ->values()
+                ->all()
+        ));
 
         return redirect()
             ->route('admin.site-settings.edit')

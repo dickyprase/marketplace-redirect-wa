@@ -1,10 +1,34 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
+    @php
+        $siteName = \App\Models\Setting::get('site_name', config('app.name'));
+        $pageTitle = $title ?? $siteName;
+        $seoTitle = $pageTitle === $siteName ? $siteName : $pageTitle . ' | ' . $siteName;
+        $seoDescription = \Illuminate\Support\Str::limit(strip_tags($description ?? 'Belanja produk pilihan terbaru dengan promo menarik, harga terbaik, dan checkout cepat via WhatsApp di ' . $siteName . '.'), 155);
+        $canonicalUrl = url()->current();
+        $faviconUrl = asset('assets/img/favicon.png');
+        $seoImage = $image ?? $faviconUrl;
+    @endphp
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ $title ?? \App\Models\Setting::get('site_name', config('app.name')) }}</title>
+    <title>{{ $seoTitle }}</title>
+    <meta name="description" content="{{ $seoDescription }}">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="{{ $canonicalUrl }}">
+    <link rel="icon" type="image/png" href="{{ $faviconUrl }}">
+    <link rel="shortcut icon" href="{{ $faviconUrl }}">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="{{ $seoTitle }}">
+    <meta property="og:description" content="{{ $seoDescription }}">
+    <meta property="og:url" content="{{ $canonicalUrl }}">
+    <meta property="og:site_name" content="{{ $siteName }}">
+    <meta property="og:image" content="{{ $seoImage }}">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ $seoTitle }}">
+    <meta name="twitter:description" content="{{ $seoDescription }}">
+    <meta name="twitter:image" content="{{ $seoImage }}">
     <link href="https://fonts.googleapis.com" rel="preconnect">
     <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&family=Montserrat:wght@100;200;300;400;500;600;700;800;900&family=Raleway:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -13,6 +37,49 @@
     <link href="{{ asset('assets/vendor/aos/aos.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/vendor/swiper/swiper-bundle.min.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/css/main.css') }}" rel="stylesheet">
+    <style>
+      .modal-backdrop.show { opacity: .55; backdrop-filter: blur(4px); }
+      .modal-content {
+        border: 0;
+        border-radius: 24px;
+        overflow: hidden;
+        box-shadow: 0 24px 80px rgba(15, 23, 42, .22);
+      }
+      .modal-header {
+        border: 0;
+        padding: 22px 24px 12px;
+        background: linear-gradient(135deg, #111827, #374151);
+        color: #fff;
+      }
+      .modal-title { font-weight: 800; letter-spacing: -.02em; color: #fff !important; }
+      .modal-header .btn-close { filter: invert(1) grayscale(100%); opacity: .85; }
+      .modal-body { padding: 22px 24px; }
+      .modal-footer { border: 0; padding: 0 24px 24px; gap: 10px; }
+      .modal .form-label { font-weight: 700; font-size: .85rem; color: #111827; }
+      .modal .form-control,
+      .modal .form-select {
+        border-radius: 14px;
+        border-color: #e5e7eb;
+        min-height: 46px;
+        background: #f9fafb;
+      }
+      .modal .form-control:focus,
+      .modal .form-select:focus {
+        background: #fff;
+        border-color: #111827;
+        box-shadow: 0 0 0 .18rem rgba(17, 24, 39, .08);
+      }
+      .modal .btn { border-radius: 14px; font-weight: 800; padding: 11px 18px; }
+      .modal .btn-dark { background: #111827; border-color: #111827; }
+      .size-chart-content table { border-radius: 14px; overflow: hidden; }
+      @media (max-width: 576px) {
+        .modal-dialog { margin: 14px; }
+        .modal-content { border-radius: 20px; }
+        .modal-header { padding: 18px 18px 10px; }
+        .modal-body { padding: 18px; }
+        .modal-footer { padding: 0 18px 18px; }
+      }
+    </style>
     @stack('styles')
 </head>
 <body class="index-page">
@@ -29,7 +96,7 @@
           <li class="dropdown"><a href="#"><span>Promo</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
             <ul>
               @foreach(\App\Models\Tag::all() as $tag)
-                <li><a href="{{ route('home') }}#tag-{{ $tag->slug }}">{{ $tag->name }}</a></li>
+                <li><a href="{{ route('home', ['tag' => $tag->slug]) }}#product-posts">{{ $tag->name }}</a></li>
               @endforeach
             </ul>
           </li>
@@ -177,21 +244,24 @@
                   @endforeach
                 </ul>
               </div>
+              @php
+                $footerLinks = json_decode(\App\Models\Setting::get('footer_links', '[]'), true) ?: [
+                  ['label' => 'Shopee', 'href' => '#', 'is_visible' => true],
+                  ['label' => 'Tokopedia', 'href' => '#', 'is_visible' => true],
+                  ['label' => 'Kontak Kami', 'href' => route('contact'), 'is_visible' => true],
+                ];
+                $visibleFooterLinks = collect($footerLinks)->filter(fn ($link) => ! empty($link['is_visible']) && ! empty($link['label']));
+              @endphp
+              @if ($visibleFooterLinks->isNotEmpty())
               <div class="col-6 col-md-3">
-                <h5>Marketplace</h5>
+                <h5>Footer Link</h5>
                 <ul class="list-unstyled">
-                  <li><a href="#">Shopee</a></li>
-                  <li><a href="#">Tokopedia</a></li>
+                  @foreach($visibleFooterLinks as $link)
+                    <li><a href="{{ $link['href'] ?: '#' }}">{{ $link['label'] }}</a></li>
+                  @endforeach
                 </ul>
               </div>
-              <div class="col-6 col-md-3">
-                <h5>Bantuan</h5>
-                <ul class="list-unstyled">
-                  <li><a href="{{ route('contact') }}">Kontak Kami</a></li>
-                  <li><a href="#">Privacy Policy</a></li>
-                  <li><a href="#">Terms of Service</a></li>
-                </ul>
-              </div>
+              @endif
             </div>
           </div>
         </div>
@@ -226,6 +296,16 @@
         return 'Rp ' + Number(n).toLocaleString('id-ID');
       }
 
+      function escapeHtml(value) {
+        return String(value ?? '').replace(/[&<>"']/g, (char) => ({
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          '"': '&quot;',
+          "'": '&#039;',
+        }[char]));
+      }
+
       function fetchCart() {
         fetch('{{ route("cart.index") }}', { headers: { 'Accept': 'application/json' } })
           .then(r => r.json())
@@ -257,8 +337,8 @@
           html += '<div class="cart-items"><div class="row align-items-center">';
           html += '<div class="col-4"><img src="' + (item.image || '{{ asset("assets/img/product/dress1.webp") }}') + '" alt="" class="img-fluid rounded"></div>';
           html += '<div class="col-8">';
-          html += '<h5>' + item.name + '</h5>';
-          if (item.size_label) html += '<p><strong>Size: </strong>' + item.size_label + '</p>';
+          html += '<h5>' + escapeHtml(item.name) + '</h5>';
+          if (item.size_label) html += '<p><strong>Size: </strong>' + escapeHtml(item.size_label) + '</p>';
           html += '<div class="row align-items-center">';
           html += '<div class="col-6"><div class="input-group input-group-sm" style="width:90px">';
           html += '<button class="btn btn-outline-secondary rounded-0" onclick="cartUpdate(' + idx + ',' + (item.qty - 1) + ')">-</button>';

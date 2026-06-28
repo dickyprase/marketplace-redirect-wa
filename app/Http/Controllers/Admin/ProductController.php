@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\Tag;
+use App\Support\SecureImageRules;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -20,7 +21,7 @@ class ProductController extends Controller
      */
     public function index(): View
     {
-        $products = Product::with(['images', 'sizes', 'category', 'tags'])->latest()->paginate(15);
+        $products = Product::with(['images', 'sizes', 'category', 'tags'])->latest()->get();
 
         return view('admin.products.index', compact('products'));
     }
@@ -83,6 +84,7 @@ class ProductController extends Controller
             $this->syncSizes($product, $validated['sizes'] ?? []);
             $product->tags()->sync($validated['tags'] ?? []);
             $this->deleteSelectedImages($product, $request);
+            $this->applyImageOrder($product, $request);
             $this->storeImages($product, $request);
             $this->applyPrimarySelection($product, $request);
             $this->ensurePrimaryImage($product);
@@ -119,6 +121,8 @@ class ProductController extends Controller
      */
     private function validateData(Request $request): array
     {
+        $this->normalizeMoneyInputs($request);
+
         return $request->validate([
             'name'                 => ['required', 'string', 'max:150'],
             'description'          => ['nullable', 'string'],
@@ -129,8 +133,10 @@ class ProductController extends Controller
             'price'                => ['required', 'numeric', 'min:0'],
             'stock_status'         => ['required', 'in:tersedia,tidak tersedia,pre order'],
             'images'               => ['nullable', 'array'],
-            'images.*'             => ['image', 'max:20480'],
+            'images.*'             => SecureImageRules::rules(),
             'primary_image'        => ['nullable'],
+            'image_order'          => ['nullable', 'array'],
+            'image_order.*'        => ['integer', 'min:1'],
             'delete_images'        => ['nullable', 'array'],
             'delete_images.*'      => ['integer'],
             'sizes'                => ['nullable', 'array'],
@@ -138,6 +144,22 @@ class ProductController extends Controller
             'sizes.*.price'        => ['nullable', 'numeric', 'min:0'],
             'sizes.*.stock_status' => ['nullable', 'in:tersedia,tidak tersedia,pre order'],
         ]);
+    }
+
+    private function normalizeMoneyInputs(Request $request): void
+    {
+        $request->merge([
+            'price' => str_replace('.', '', (string) $request->input('price')),
+        ]);
+
+        $sizes = $request->input('sizes', []);
+        foreach ($sizes as $idx => $size) {
+            if (isset($size['price'])) {
+                $sizes[$idx]['price'] = str_replace('.', '', (string) $size['price']);
+            }
+        }
+
+        $request->merge(['sizes' => $sizes]);
     }
 
     /**
@@ -222,6 +244,29 @@ class ProductController extends Controller
         foreach ($images as $image) {
             Storage::disk('public')->delete($image->path);
             $image->delete();
+        }
+    }
+
+    /**
+     * Simpan urutan gambar existing dari input admin.
+     */
+    private function applyImageOrder(Product $product, Request $request): void
+    {
+        $orders = $request->input('image_order', []);
+        if (empty($orders)) {
+            return;
+        }
+
+        foreach ($orders as $imageId => $order) {
+            $product->images()
+                ->whereKey($imageId)
+                ->update(['sort_order' => max(0, ((int) $order) - 1)]);
+        }
+
+        $firstImage = $product->images()->orderBy('sort_order')->orderBy('id')->first();
+        if ($firstImage) {
+            $product->images()->update(['is_primary' => false]);
+            $product->images()->whereKey($firstImage->id)->update(['is_primary' => true]);
         }
     }
 

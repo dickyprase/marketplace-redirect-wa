@@ -22,7 +22,7 @@
   </div>
 
   <section id="product-posts" class="product-posts section">
-    <div class="container-fluid" data-aos="fade-up" data-aos-delay="100">
+    <div id="product-list" class="container-fluid" data-aos="fade-up" data-aos-delay="100">
       <div class="row gy-4 align-items-stretch">
         @forelse ($products as $product)
         <div class="col-6 col-lg-2" data-aos="fade-up" data-aos-delay="200">

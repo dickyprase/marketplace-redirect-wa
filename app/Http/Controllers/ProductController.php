@@ -22,16 +22,36 @@ class ProductController extends Controller
 
         $activeTagSlug = $request->query('tag');
         $activeTag = $activeTagSlug ? $tags->firstWhere('slug', $activeTagSlug) : null;
+        $activeCategorySlug = $request->query('category');
+        $activeCategory = $activeCategorySlug ? $categories->firstWhere('slug', $activeCategorySlug) : null;
 
         $productsQuery = Product::with(['images', 'sizes', 'tags'])->latest();
+
+        if ($activeCategory) {
+            $productsQuery->where('category_id', $activeCategory->id);
+        }
 
         if ($activeTag) {
             $productsQuery->whereHas('tags', fn ($q) => $q->where('tags.id', $activeTag->id));
         }
 
+        if ($request->filled('min_price')) {
+            $productsQuery->where('price', '>=', (float) $request->query('min_price'));
+        }
+
+        if ($request->filled('max_price')) {
+            $productsQuery->where('price', '<=', (float) $request->query('max_price'));
+        }
+
+        match ($request->query('sort')) {
+            'price_asc' => $productsQuery->reorder()->orderBy('price'),
+            'price_desc' => $productsQuery->reorder()->orderByDesc('price'),
+            default => null,
+        };
+
         $products = $productsQuery->limit(24)->get();
 
-        return view('products.index', compact('banners', 'categories', 'tags', 'products', 'activeTag'));
+        return view('products.index', compact('banners', 'categories', 'tags', 'products', 'activeTag', 'activeCategory'));
     }
 
     /**

@@ -77,6 +77,52 @@
   </div>
  </div>
 
+ <div class="card mb-4">
+  <div class="card-header bg-white d-flex align-items-center justify-content-between">
+   <h6 class="mb-0 fw-semibold"><i class="bi bi-link-45deg me-2 text-primary"></i>Tautan Footer Toko</h6>
+   <span class="badge bg-light text-muted border">{{ count($settings['footer_links'] ?? []) }} link</span>
+  </div>
+  <div class="card-body">
+   <p class="text-muted small mb-3"><i class="bi bi-info-circle me-1"></i>Atur teks, alamat tujuan, dan status tampil tiap link tambahan di footer toko. Nonaktifkan toggle <strong>Tampilkan</strong> untuk menyembunyikan link tanpa menghapusnya.</p>
+   <div class="vstack gap-3">
+    @foreach (($settings['footer_links'] ?? []) as $idx => $link)
+     <div class="border rounded-3 p-3 bg-light-subtle">
+      <div class="d-flex align-items-center gap-2 mb-3">
+       <span class="badge rounded-pill bg-primary">Link {{ $idx + 1 }}</span>
+       <span class="text-muted small">Tautan di bagian bawah toko</span>
+      </div>
+      <div class="row g-3 align-items-end">
+       <div class="col-12 col-md-4">
+        <label class="form-label small fw-semibold mb-1">Label <span class="text-muted fw-normal">(teks tampil)</span></label>
+        <input type="text" name="footer_links[{{ $idx }}][label]" value="{{ old('footer_links.' . $idx . '.label', $link['label'] ?? '') }}" class="form-control" placeholder="Shopee">
+       </div>
+       <div class="col-12 col-md-5">
+        <label class="form-label small fw-semibold mb-1">Href / URL <span class="text-muted fw-normal">(tujuan)</span></label>
+        <div class="input-group">
+         <span class="input-group-text bg-white text-muted"><i class="bi bi-link-45deg"></i></span>
+         <input type="text" name="footer_links[{{ $idx }}][href]" value="{{ old('footer_links.' . $idx . '.href', $link['href'] ?? '#') }}" class="form-control" placeholder="https://... atau #">
+        </div>
+       </div>
+       <div class="col-12 col-md-3">
+        <label class="form-label small fw-semibold mb-1 d-block">Status</label>
+        <div class="form-check form-switch ps-0 d-flex align-items-center gap-2">
+         <input type="hidden" name="footer_links[{{ $idx }}][is_visible]" value="0">
+         <input class="form-check-input ms-0 mt-0" type="checkbox" role="switch" name="footer_links[{{ $idx }}][is_visible]" value="1" id="footer-visible-{{ $idx }}" @checked(old('footer_links.' . $idx . '.is_visible', $link['is_visible'] ?? false))>
+         <label class="form-check-label small" for="footer-visible-{{ $idx }}">Tampilkan</label>
+        </div>
+       </div>
+      </div>
+     </div>
+    @endforeach
+    @if (empty($settings['footer_links'] ?? []))
+     <div class="text-center text-muted small py-3 border rounded-3 bg-light-subtle">
+      <i class="bi bi-link-45deg d-block fs-4 mb-1"></i>Belum ada link footer.
+     </div>
+    @endif
+   </div>
+  </div>
+ </div>
+
  <div class="d-flex gap-2">
   <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-1"></i> Simpan Site Setting</button>
   <a href="{{ route('admin.products.index') }}" class="btn btn-light">Batal</a>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
+use App\Support\SecureImageRules;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -27,7 +28,7 @@ class CategoryController extends Controller
         $data = $request->validate([
             'name'       => ['required', 'string', 'max:100'],
             'sort_order' => ['nullable', 'integer', 'min:0'],
-            'image'      => ['nullable', 'image', 'max:20480'],
+            'image'      => SecureImageRules::rules(),
         ]);
 
         if ($request->hasFile('image')) {
@@ -50,7 +51,7 @@ class CategoryController extends Controller
         $data = $request->validate([
             'name'       => ['required', 'string', 'max:100'],
             'sort_order' => ['nullable', 'integer', 'min:0'],
-            'image'      => ['nullable', 'image', 'max:20480'],
+            'image'      => SecureImageRules::rules(),
         ]);
 
         if ($request->hasFile('image')) {

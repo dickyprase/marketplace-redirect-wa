@@ -1,4 +1,4 @@
-<x-layouts.store :title="$product->name">
+<x-layouts.store :title="$product->name" :description="strip_tags($product->description ?? '')" :image="$product->primaryImage?->url">
 @php
     $hasSizes = $product->hasSizes();
     $images = $product->images;
@@ -31,6 +31,69 @@
     background: #f9fafb;
   }
   .size-chart-content p:last-child { margin-bottom: 0; }
+  .product-content {
+    border: 1px solid #eef0f3;
+    border-radius: 24px;
+    box-shadow: 0 16px 40px rgba(15, 23, 42, .07);
+    padding: 24px;
+    background: #fff;
+  }
+  .product-title-row { gap: 12px; }
+  .product-title {
+    font-size: clamp(1.35rem, 2.5vw, 2rem);
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: -.02em;
+  }
+  .product-category-pill,
+  .product-tag-pill {
+    border-radius: 999px;
+    padding: 7px 12px;
+    font-size: .75rem;
+    font-weight: 700;
+  }
+  .product-category-pill { background: #111827; color: #fff; }
+  .product-tag-pill { background: #f3f4f6; color: #374151; }
+  .product-price-card {
+    margin-top: 18px;
+    padding: 16px;
+    border-radius: 18px;
+    background: linear-gradient(135deg, #111827, #374151);
+    color: #fff;
+  }
+  .product-price-label { font-size: .75rem; text-transform: uppercase; letter-spacing: .08em; opacity: .75; font-weight: 700; }
+  .product-price-value { margin: 4px 0 0; font-size: clamp(1.55rem, 3vw, 2.35rem); font-weight: 900; color: #fff; }
+  .size-chart-button {
+    margin-top: 12px;
+    border-radius: 14px;
+    padding: 11px 14px;
+    font-weight: 800;
+    border: 1px solid #111827;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    color: #111827;
+    background: #fff;
+  }
+  .size-chart-button:hover { background: #111827; color: #fff; }
+  .product-description-card {
+    margin-top: 18px;
+    padding: 18px;
+    border: 1px solid #eef0f3;
+    border-radius: 18px;
+    background: #fafafa;
+    color: #374151;
+    line-height: 1.75;
+  }
+  @media (max-width: 576px) {
+    .product-content { padding: 18px; border-radius: 20px; }
+    .product-title-row { align-items: flex-start !important; }
+    .product-category-pill, .product-tag-pill { font-size: .68rem; padding: 6px 10px; }
+    .product-price-card { padding: 14px; }
+    .size-chart-button { width: 100%; justify-content: center; }
+    .product-description-card { padding: 15px; font-size: .92rem; }
+  }
 </style>
 @endpush
 
@@ -65,28 +128,37 @@
           <div class="col-lg-6">
             <div class="product-content" data-aos="fade-up" data-aos-delay="200">
               <div class="content-header">
-                <div class="d-flex align-items-center gap-3">
-                  <h3 class="mb-0">{{ $product->name }}</h3>
+                <div class="d-flex align-items-center justify-content-between flex-wrap product-title-row">
+                  <h3 class="mb-0 product-title">{{ $product->name }}</h3>
                   @if ($product->category)
-                    <span class="badge bg-secondary">{{ $product->category->name }}</span>
+                    <span class="product-category-pill">{{ $product->category->name }}</span>
                   @endif
                 </div>
+
                 @if ($product->tags->isNotEmpty())
-                <div class="mt-2">
+                <div class="d-flex flex-wrap gap-2 mt-3">
                   @foreach ($product->tags as $tag)
-                    <span class="cat-badge">{{ $tag->name }}</span>
+                    <span class="product-tag-pill">{{ $tag->name }}</span>
                   @endforeach
                 </div>
+                @endif
+
+                <div class="product-price-card">
+                  <div class="product-price-label">Harga Produk</div>
+                  <h2 id="display-price" class="product-price-value">{{ $product->priceRangeLabel() }}</h2>
+                </div>
+
+                @if ($product->size_chart)
+                  <a href="#" data-bs-toggle="modal" data-bs-target="#sizeChartModal" class="size-chart-button">
+                    <i class="bi bi-rulers"></i>
+                    <span>Lihat Size Chart</span>
+                  </a>
                 @endif
               </div>
 
               <div class="content-body">
                 @if ($product->description)
-                  <div class="mb-3">{!! $product->description !!}</div>
-                @endif
-
-                @if ($product->size_chart)
-                  <p class="mb-3"><a href="#" data-bs-toggle="modal" data-bs-target="#sizeChartModal" class="text-decoration-underline">Lihat Size Chart</a></p>
+                  <div class="product-description-card">{!! $product->description !!}</div>
                 @endif
 
                 @if ($hasSizes)
@@ -105,11 +177,6 @@
                   <input type="hidden" name="selected_size_id" id="selected-size-id" value="">
                 </div>
                 @endif
-
-                <div class="price mt-4">
-                  <h4>Harga :</h4>
-                  <h2 id="display-price">{{ $product->priceRangeLabel() }}</h2>
-                </div>
 
                 @if (! $product->isOrderableNow())
                   <div class="alert alert-danger mt-3">Produk ini sedang tidak tersedia.</div>

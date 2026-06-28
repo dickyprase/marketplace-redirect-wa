@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Banner;
+use App\Support\SecureImageRules;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -25,7 +26,7 @@ class BannerController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $data = $request->validate([
-            'image'      => ['required', 'image', 'max:20480'],
+            'image'      => SecureImageRules::rules(required: true),
             'link'       => ['nullable', 'string', 'max:255'],
             'sort_order' => ['nullable', 'integer', 'min:0'],
             'is_active'  => ['nullable', 'boolean'],
@@ -49,7 +50,7 @@ class BannerController extends Controller
     public function update(Request $request, Banner $banner): RedirectResponse
     {
         $data = $request->validate([
-            'image'      => ['nullable', 'image', 'max:20480'],
+            'image'      => SecureImageRules::rules(),
             'link'       => ['nullable', 'string', 'max:255'],
             'sort_order' => ['nullable', 'integer', 'min:0'],
             'is_active'  => ['nullable', 'boolean'],

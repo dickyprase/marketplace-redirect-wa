@@ -1158,21 +1158,20 @@ section,
 
 @media (max-width: 768px) {
   .product-posts .product-category-scroll {
-    justify-content: flex-start;
-    overflow-x: auto;
-    flex-wrap: nowrap;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-    padding: 0 50px;
-  }
-
-  .product-posts .product-category-scroll::-webkit-scrollbar {
-    display: none;
+    justify-content: center;
+    overflow-x: visible;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 0 14px;
   }
 
   .product-posts .product-category-scroll .btn {
-    flex-shrink: 0;
+    flex: 0 1 auto;
     white-space: nowrap;
+    padding: 6px 9px;
+    font-size: 11px;
+    line-height: 1.2;
+    margin-right: 0 !important;
   }
 }
 
